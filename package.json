@@ -1,0 +1,50 @@
+{
+  "name": "@clipy/arec",
+  "version": "1.3.1",
+  "description": "AREC (Agent Recording): the open, Markdown-based format that makes a screen recording readable by AI agents. Specification, JSON Schema, reference validator and conformance fixtures.",
+  "type": "module",
+  "license": "MIT AND CC0-1.0",
+  "author": "Clipy (https://clipy.online)",
+  "homepage": "https://clipy.online/spec",
+  "keywords": [
+    "arec",
+    "agent-recording",
+    "screen-recording",
+    "ai-agents",
+    "mcp",
+    "markdown",
+    "specification",
+    "validator"
+  ],
+  "exports": {
+    ".": "./validator/validate.mjs",
+    "./schema": "./schema/arec-1.3.schema.json",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "arec-validate": "bin/arec-validate.mjs"
+  },
+  "files": [
+    "bin/",
+    "validator/",
+    "schema/",
+    "fixtures/",
+    "scripts/",
+    "SPEC.md",
+    "CHANGELOG.md",
+    "LICENSE.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node scripts/build-schema.mjs --check && node scripts/run-fixtures.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arecformat/arec.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arecformat/arec/issues"
+  }
+}

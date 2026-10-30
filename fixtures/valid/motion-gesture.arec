@@ -1,0 +1,34 @@
+<!-- arec
+spec_version: 1.3
+profile: clipy-recording
+canonical_url: https://example.com/video/motion001.arec
+watch_url: https://example.com/video/motion001
+-->
+
+# Reorder the assurance row
+
+## Metadata
+- Format: AREC (Agent Recording)
+- Spec version: 1.3
+- Duration: 00:29
+- Access: public
+- Processing: ready
+
+## Intent
+- Type: feedback
+- Objective: Move "Cancel anytime" before "No credit card".
+
+## Summary
+The reviewer drags one assurance item ahead of another and explains the order
+they want.
+
+## Key moments
+```json
+[{"t_ms":22500,"caption":"moves 'Cancel anytime' ahead of 'No credit card'","frame_url":"./moments/assurance-frame.jpg","x":0.2415,"y":0.6243,"source":"flare","confidence":1,"motion":{"relation":"move","target_x":0.1504,"target_y":0.6243,"target_frame_url":"./moments/assurance-target-frame.jpg"}}]
+```
+
+## Capture gaps
+- No known capture gaps in the generated artifacts.
+
+## Transcript
+[00:22] Cancel anytime should come before no credit card.

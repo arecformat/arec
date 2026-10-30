@@ -1,0 +1,22 @@
+<!-- arec
+spec_version: 1.3
+profile: clipy-recording
+canonical_url: https://example.com/video/badcoords01.arec
+watch_url: https://example.com/video/badcoords01
+-->
+
+# Settings toggle does not save
+
+## Metadata
+- Access: public
+
+## Key moments
+```json
+[{"t_ms":6000,"caption":"clicks Export CSV","frame_url":"https://cdn.example/6000.jpg","x":812,"y":274,"source":"click"}]
+```
+
+## Capture gaps
+- None.
+
+## Transcript
+[00:06] Clicking Export CSV now.

@@ -1,0 +1,466 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clipy.online/schema/arec-1.3.schema.json",
+  "title": "AREC (Agent Recording) 1.3",
+  "description": "Optional strict producer-conformance schema for the machine-readable parts of an AREC document: the identity header parsed into an object, the key-moments array, and the browser-diagnostics array. It is a check a producer can run on what it writes, not a gate for reading: readers are lenient and never refuse a document (specification sections 4.2 and 7.1). For these parts it applies the same rules as the reference strict check (validateArec with mode 'conform'), and its patterns are generated from validate.mjs, with one exception a schema cannot express: a name repeated within one object, which the strict check flags in the JSON text. Versioning: a header declaring 1.x is checked against every rule here; a legacy document (any 0.x version, or no identity comment, so no header) is checked only against what specification section 5 forbids (sensitive diagnostic keys, raw query values in diagnostics, and evidence that needs on-demand frame extraction), which applies to every version; a newer major version is flagged. Rules that need the Markdown itself are in specification section 4.4.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "header": {
+      "$ref": "#/$defs/headerBase",
+      "description": "The identity comment, parsed into an object. Absent for a legacy document written before identity comments existed."
+    },
+    "key_moments": {
+      "description": "The key-moments array. Checked item by item when the header declares a 1.x version; the section 5 rules apply to every version."
+    },
+    "browser_diagnostics": {
+      "description": "The browser-diagnostics array. Checked item by item when the header declares a 1.x version; the section 5 rules apply to every version."
+    }
+  },
+  "allOf": [
+    {
+      "description": "Specification section 5: content a producer must never write, checked in a document of any version.",
+      "properties": {
+        "key_moments": {
+          "items": {
+            "$ref": "#/$defs/momentEvidence"
+          }
+        },
+        "browser_diagnostics": {
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/noSecrets"
+              },
+              {
+                "$ref": "#/$defs/noRawQueryValues"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "if": {
+    "required": [
+      "header"
+    ],
+    "properties": {
+      "header": {
+        "required": [
+          "spec_version"
+        ],
+        "properties": {
+          "spec_version": {
+            "pattern": "^1\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?![\\s\\S])"
+          }
+        }
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "header": {
+        "$ref": "#/$defs/header"
+      },
+      "key_moments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/keyMoment"
+        }
+      },
+      "browser_diagnostics": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/diagnostic"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "headerBase": {
+      "type": "object",
+      "description": "What every readable header has: a spec_version that is either 1.x or a legacy 0.x value. A newer major version is rejected.",
+      "required": [
+        "spec_version"
+      ],
+      "properties": {
+        "spec_version": {
+          "type": "string",
+          "anyOf": [
+            {
+              "pattern": "^0\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?![\\s\\S])"
+            },
+            {
+              "pattern": "^1\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?![\\s\\S])"
+            }
+          ]
+        }
+      }
+    },
+    "header": {
+      "type": "object",
+      "description": "Parsed from the leading `<!-- arec ... -->` comment. Field names are fixed.",
+      "required": [
+        "spec_version",
+        "profile"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "spec_version": {
+          "type": "string",
+          "description": "The AREC version whose rules apply, as MAJOR.MINOR (1.3). Documents written against 0.3 may carry a pre-release suffix; it uses the same field set as 1.3, so readers read it the same way.",
+          "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?![\\s\\S])"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Known profiles: clipy-recording for a hosted recording, imported-context for a compiled external video. Unless spec_version is a 1.x minor newer than 1.3, the profile MUST be one of them. A later 1.x minor may add profiles, so for those versions any string is accepted and consumers read the sections they recognize.",
+          "examples": [
+            "clipy-recording",
+            "imported-context"
+          ],
+          "minLength": 1
+        },
+        "canonical_url": {
+          "description": "Canonical .arec reference. Required when the document has public URLs. Absolute https for a hosted document, or a relative path inside a downloadable bundle. An empty value means absent.",
+          "anyOf": [
+            {
+              "const": ""
+            },
+            {
+              "$ref": "#/$defs/artifactRef"
+            }
+          ]
+        },
+        "watch_url": {
+          "type": "string",
+          "description": "Human-facing watch URL, an absolute https URL. Required when the document has public URLs. An empty value means absent.",
+          "pattern": "^(?:https://\\S+)?(?![\\s\\S])"
+        }
+      },
+      "if": {
+        "required": [
+          "spec_version"
+        ],
+        "properties": {
+          "spec_version": {
+            "pattern": "^1\\.(?:[4-9]|[1-9][0-9]+)(?:-[0-9A-Za-z.-]+)?(?![\\s\\S])"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "profile": {
+            "enum": [
+              "clipy-recording",
+              "imported-context"
+            ]
+          }
+        }
+      },
+      "$comment": "Matches the reference validator: an unknown profile is an error unless spec_version is a 1.x minor newer than 1.3."
+    },
+    "keyMoment": {
+      "type": "object",
+      "description": "One timestamped piece of visual evidence. A field whose value is null is treated as absent.",
+      "required": [
+        "t_ms",
+        "caption"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "t_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Offset from the start of the recording, in milliseconds."
+        },
+        "caption": {
+          "type": "string",
+          "description": "What the moment shows. Must contain a non-whitespace character.",
+          "pattern": "\\S"
+        },
+        "frame_url": {
+          "description": "Reference to a precomputed artifact, or null when not captured. Same rule as artifactRef.",
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artifactRef"
+            }
+          ]
+        },
+        "crop_url": {
+          "description": "Reference to a precomputed artifact, or null when not captured. Same rule as artifactRef.",
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artifactRef"
+            }
+          ]
+        },
+        "x": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Frame-relative pointer coordinate."
+        },
+        "y": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "source": {
+          "description": "How the moment was established. Known values: click and fused mean a recorded click; hover means the pointer rested without clicking; draw and flare mean a deliberate mark or spotlight; motion means a move gesture; deixis means a spoken reference to something on screen; narration means agent narration. Consumers ignore values they do not know. Any value is accepted; an unrecognized one is a validator warning, not an error.",
+          "examples": [
+            "click",
+            "fused",
+            "hover",
+            "draw",
+            "flare",
+            "motion",
+            "narration",
+            "deixis"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "motion": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Where a motion gesture ended, when the pointer deliberately moved something from one place to another.",
+          "required": [
+            "target_x",
+            "target_y"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "relation": {
+              "description": "How the destination relates to the origin, for example \"move\"."
+            },
+            "target_x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "target_y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "target_frame_url": {
+              "description": "Precomputed frame at the destination, or null. Same rule as frame_url.",
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/artifactRef"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "x"
+            ],
+            "properties": {
+              "x": {
+                "type": "number"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "y"
+            ],
+            "properties": {
+              "y": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "y"
+            ],
+            "properties": {
+              "y": {
+                "type": "number"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "x"
+            ],
+            "properties": {
+              "x": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      ],
+      "$comment": "x and y are paired only when they hold numbers: a null coordinate means not captured, as in the reference validator."
+    },
+    "diagnostic": {
+      "type": "object",
+      "description": "One privacy-redacted browser diagnostic. Headers, bodies, cookies, tokens and raw query values must not be present, at any depth, under any key casing. Field types other than `kind` are descriptive: a producer may add kinds and fields, and consumers ignore what they do not recognize.",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "What happened. Clipy emits network, console, error, unhandled_rejection, stream, action and navigation; other producers may add kinds.",
+          "examples": [
+            "network",
+            "console",
+            "error",
+            "unhandled_rejection",
+            "stream",
+            "action",
+            "navigation"
+          ]
+        },
+        "time_ms": {
+          "description": "Milliseconds from the start of the recording."
+        },
+        "method": {
+          "description": "HTTP method of a network event, or the console method."
+        },
+        "url": {
+          "description": "Redacted URL: origin and path, never a raw query string."
+        },
+        "status": {
+          "description": "HTTP status, or null when the request never received one."
+        },
+        "outcome": {
+          "description": "How a network request ended, for example success, http_error or network_error."
+        },
+        "duration_ms": {
+          "description": "Duration in milliseconds."
+        },
+        "level": {
+          "description": "Console level, for example warn or error."
+        },
+        "message": {
+          "description": "Redacted message text."
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/noSecrets"
+        },
+        {
+          "$ref": "#/$defs/noRawQueryValues"
+        }
+      ]
+    },
+    "artifactRef": {
+      "type": "string",
+      "description": "Reference to a precomputed artifact: an absolute https URL, or a path inside a bundle (no scheme such as http:, javascript:, data: or file:, no leading /, no .. segment, no whitespace). Must not be a server-side frame-extraction endpoint.",
+      "pattern": "^(?:https://\\S+|(?![A-Za-z][A-Za-z0-9+.-]*:)(?!/)(?!(?:[^/]*/)*\\.\\.(?:/|(?![\\s\\S])))\\S+)(?![\\s\\S])",
+      "not": {
+        "pattern": "[?&](?:[tT]|[aA][tT]|[tT][iI][mM][eE]|[sS][eE][eE][kK]|[tT][sS]|[tT][iI][mM][eE][sS][tT][aA][mM][pP]|[fF][rR][aA][mM][eE]_[aA][tT])="
+      }
+    },
+    "noSecrets": {
+      "description": "No object at any depth may carry a key that names headers, bodies, cookies, credentials or raw query values. Names are compared ignoring ASCII case, `-`, `_`, space, tab, CR and LF, anywhere in the name including its start and end (Set-Cookie, set_cookie, setCookie and _token match); the list is in specification section 5.",
+      "propertyNames": {
+        "not": {
+          "pattern": "^[-_ \\t\\r\\n]*(?:[hH][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[sS]|[hH][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR]|[bB][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[yY]|[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[qQ][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[bB][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[yY]|[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[pP][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[nN][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[bB][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[yY]|[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[qQ][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[sS]|[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[pP][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[nN][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[sS]|[pP][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[aA]|[cC][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[eE]|[cC][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS]|[sS][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[cC][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[eE]|[aA][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[zZ][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[nN]|[pP][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[xX][-_ \\t\\r\\n]*[yY][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[zZ][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[nN]|[bB][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR]|[bB][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[aA][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[xX][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[aA][-_ \\t\\r\\n]*[cC][-_ \\t\\r\\n]*[cC][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[fF][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[iI][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[cC][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[fF][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[xX][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[fF][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[xX][-_ \\t\\r\\n]*[cC][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[fF][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[xX][-_ \\t\\r\\n]*[xX][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[fF][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN]|[aA][-_ \\t\\r\\n]*[pP][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[yY]|[xX][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[pP][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[yY]|[cC][-_ \\t\\r\\n]*[lL][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[cC][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[tT]|[pP][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[vV][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[kK][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[yY]|[pP][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[wW][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[dD]|[pP][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[wW][-_ \\t\\r\\n]*[dD]|[pP][-_ \\t\\r\\n]*[wW][-_ \\t\\r\\n]*[dD]|[pP][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[pP][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[eE]|[sS][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[cC][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[tT]|[cC][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[lL]|[cC][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[dD][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[nN][-_ \\t\\r\\n]*[tT][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[lL][-_ \\t\\r\\n]*[sS]|[jJ][-_ \\t\\r\\n]*[wW][-_ \\t\\r\\n]*[tT]|[jJ][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[oO][-_ \\t\\r\\n]*[nN][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[dD]|[pP][-_ \\t\\r\\n]*[hH][-_ \\t\\r\\n]*[pP][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[sS][-_ \\t\\r\\n]*[iI][-_ \\t\\r\\n]*[dD]|[qQ][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[yY][-_ \\t\\r\\n]*[pP][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[mM][-_ \\t\\r\\n]*[sS]|[rR][-_ \\t\\r\\n]*[aA][-_ \\t\\r\\n]*[wW][-_ \\t\\r\\n]*[qQ][-_ \\t\\r\\n]*[uU][-_ \\t\\r\\n]*[eE][-_ \\t\\r\\n]*[rR][-_ \\t\\r\\n]*[yY])[-_ \\t\\r\\n]*(?![\\s\\S])"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/noSecrets"
+      },
+      "items": {
+        "$ref": "#/$defs/noSecrets"
+      }
+    },
+    "momentEvidence": {
+      "description": "The section 5 evidence rule for a key moment, applied to every version: evidence references point at precomputed artifacts.",
+      "properties": {
+        "frame_url": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artifactRef"
+            }
+          ]
+        },
+        "crop_url": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artifactRef"
+            }
+          ]
+        },
+        "motion": {
+          "properties": {
+            "target_frame_url": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/artifactRef"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "noRawQueryValues": {
+      "description": "No string at any depth, and no object name, may begin, after optional space, tab, CR or LF, with a URL that carries a parameter value in its query or fragment (`?id=42`, `#access_token=abc`). The URL starts with a scheme and ://, or with /, and ends at the first space, tab, CR or LF. Producers keep the key names and drop the values (`?format&id`); an empty value is not a value. See specification section 5.",
+      "not": {
+        "type": "string",
+        "pattern": "^[ \\t\\r\\n]*(?:[A-Za-z][A-Za-z0-9+.-]*://|/)[^ \\t\\r\\n?#]*[?#](?:[^ \\t\\r\\n]*[&#?])?[^ \\t\\r\\n=&#?]*=[^ \\t\\r\\n&#?]"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/noRawQueryValues"
+      },
+      "items": {
+        "$ref": "#/$defs/noRawQueryValues"
+      },
+      "propertyNames": {
+        "not": {
+          "type": "string",
+          "pattern": "^[ \\t\\r\\n]*(?:[A-Za-z][A-Za-z0-9+.-]*://|/)[^ \\t\\r\\n?#]*[?#](?:[^ \\t\\r\\n]*[&#?])?[^ \\t\\r\\n=&#?]*=[^ \\t\\r\\n&#?]"
+        }
+      }
+    }
+  }
+}

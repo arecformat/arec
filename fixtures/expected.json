@@ -1,0 +1,15 @@
+{
+  "description": "For each invalid fixture, the one rule it breaks. Every error the strict check reports for that file contains this text; a port can use the file to check that it rejects each fixture for the right reason.",
+  "invalid": {
+    "diagnostics-leak-cookies.arec": "must not be present",
+    "diagnostics-raw-query-value.arec": "carries a raw query value",
+    "dynamic-frame-extraction.arec": "must reference a precomputed artifact",
+    "legacy-diagnostics-leak.arec": "must not be present",
+    "missing-identity-comment.arec": "Missing the AREC identity comment",
+    "motion-target-out-of-range.arec": "must be a frame-relative coordinate between 0 and 1",
+    "pointer-out-of-range.arec": "must be a frame-relative coordinate between 0 and 1",
+    "public-without-urls.arec": "Document declares `Access: public`",
+    "silent-about-missing-capture.arec": "Missing `Capture gaps`",
+    "unknown-profile.arec": "Unknown `profile`"
+  }
+}

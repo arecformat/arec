@@ -1,0 +1,31 @@
+<!-- arec
+spec_version: 1.3
+profile: clipy-recording
+canonical_url: https://example.com/video/silentdemo01.arec
+watch_url: https://example.com/video/silentdemo01
+-->
+
+# Silent UI walkthrough
+
+## Metadata
+- Format: AREC (Agent Recording)
+- Spec version: 1.3
+- Duration: 00:18
+- Access: public
+- Processing: ready
+
+## Intent
+- Type: demo
+- Objective: Show the new empty state.
+
+## Summary
+A short silent pass over the redesigned empty state.
+
+## Key moments
+```json
+[{"t_ms":2000,"caption":"empty state renders","frame_url":"https://cdn.example/2000.jpg","source":"motion"}]
+```
+
+## Capture gaps
+- No transcript exists for this recording because no speech was captured. The
+  absence of narration is not evidence that nothing happened onscreen.

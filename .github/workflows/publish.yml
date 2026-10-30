@@ -1,0 +1,52 @@
+name: Publish
+
+# Push a tag such as v1.3.1 to publish the package to npm. The tag must match
+# package.json and point at a commit on main. A version with a pre-release
+# suffix (v1.4.0-rc.1) is published under the `next` dist-tag, never `latest`.
+#
+# The npm token lives in the `npm` environment. Give it rights to this one
+# package only, and add required reviewers to the environment (Settings,
+# Environments) so a pushed tag cannot publish without approval.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm test
+      - name: Tag matches package.json and is on main
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${version}"
+            exit 1
+          fi
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
+            echo "Tag ${GITHUB_REF_NAME} points at a commit that is not on main"
+            exit 1
+          fi
+      - name: Publish
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          case "${version}" in
+            *-*) dist_tag=next ;;
+            *) dist_tag=latest ;;
+          esac
+          npm publish --access public --provenance --tag "${dist_tag}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

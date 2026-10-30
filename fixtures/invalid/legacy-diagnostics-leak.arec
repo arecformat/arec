@@ -1,0 +1,22 @@
+<!-- arec
+spec_version: 0.3
+profile: clipy-recording
+-->
+
+# Profile photo upload hangs
+
+## Metadata
+- Format: AREC (Agent Recording)
+- Spec version: 0.3
+- Access: private
+
+## Browser diagnostics
+```json
+[{"kind":"network","time_ms":5200,"method":"POST","url":"https://app.example/api/avatar","status":504,"request_headers":{"x-session":"redacted-in-a-real-producer"}}]
+```
+
+## Capture gaps
+- None.
+
+## Transcript
+[00:02] I pick a photo and the upload spinner never stops.
