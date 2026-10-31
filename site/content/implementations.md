@@ -37,7 +37,10 @@ an AREC document for every recording it hosts, whichever app made it:
   into a hosted recording, so it can hand back proof of the work it verified.
 
 Every hosted Clipy recording has two addresses: the watch page for people, and
-the same address ending in `.arec` for agents.
+the same address ending in `.arec` for agents. For a worked example, the case
+study [From "this button" to working edits](https://clipy.online/research/arec-visual-case-study)
+shows a Clipy recording beside its AREC document, the frames it links to and
+the edits a coding agent made from it.
 
 ### Your recorder
 

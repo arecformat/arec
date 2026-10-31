@@ -82,6 +82,14 @@ The [full specification](/spec#37-example-a-minimal-hosted-document) shows a
 complete document, and a [worked example](/arec/examples/relay-design-review.arec)
 is available to download.
 
+## See AREC in action
+
+[From "this button" to working edits](https://clipy.online/research/arec-visual-case-study)
+shows a design review recorded with Clipy: play the recording, see the frames
+its AREC document links to, open the document itself, and read what a coding
+agent did with it. The [coding benchmark](https://clipy.online/research/arec-coding-benchmark)
+publishes its source video, AREC document and result data.
+
 ## Reading and checking AREC
 
 Readers are lenient by design. A conformant reader never rejects a document for
