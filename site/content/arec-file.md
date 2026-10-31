@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-30
+updated: 2026-10-31
 title: What is an .arec file and how do I open it?
 description: An .arec file is an AREC (Agent Recording) document: plain Markdown describing a screen recording for AI agents. Open it in any text editor.
 ---
@@ -82,7 +82,7 @@ node bin/arec-validate.mjs ../recording.arec
 ```
 
 Add `--strict` to check a file you produced against the rules a program can
-check (specification section 4.4).
+check, listed in specification section 4.4.
 
 ## Which programs create .arec files?
 

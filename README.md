@@ -10,11 +10,12 @@ conformant document joins narrated intent to timestamped visual evidence, so an
 agent can understand a request without decoding video and can trace every
 conclusion back to the evidence it came from.
 
-- Specification: https://clipy.online/spec (plain text: https://clipy.online/spec.md)
+- Specification: https://arecformat.org/spec (plain text: https://arecformat.org/spec.md)
 - Current version: 1.3 (stable)
 - Machine-readable schema: [`schema/arec-1.3.schema.json`](schema/arec-1.3.schema.json)
-- License: specification, schema and fixtures in the public domain (CC0 1.0);
-  validator under the MIT License. See [LICENSE.md](LICENSE.md).
+- License: specification, schema, fixtures, examples and the website's text
+  and images in the public domain (CC0 1.0); validator and build scripts under
+  the MIT License. See [LICENSE.md](LICENSE.md).
 
 ## Reading is lenient
 

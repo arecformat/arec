@@ -4,13 +4,13 @@
 | --- | --- |
 | **Version** | 1.3 (stable) |
 | **Updated** | 30 October 2026 |
-| **Latest version** | [clipy.online/spec](https://clipy.online/spec) |
-| **Plain text** | [clipy.online/spec.md](https://clipy.online/spec.md) |
-| **JSON Schema** | [arec-1.3.schema.json](https://clipy.online/schema/arec-1.3.schema.json) |
-| **Reference reader and validator** | [validate.mjs](https://clipy.online/arec/validate.mjs) and [arec-validate.mjs](https://clipy.online/arec/arec-validate.mjs) |
-| **Conformance fixtures** | [clipy.online/arec/fixtures](https://clipy.online/arec/fixtures/index.json) |
-| **Worked example** | [relay-design-review.arec](https://clipy.online/arec/examples/relay-design-review.arec) |
-| **Version history** | [AREC changelog](https://clipy.online/spec/changelog) |
+| **Latest version** | [arecformat.org/spec](https://arecformat.org/spec) |
+| **Plain text** | [arecformat.org/spec.md](https://arecformat.org/spec.md) |
+| **JSON Schema** | [arec-1.3.schema.json](https://arecformat.org/schema/arec-1.3.schema.json) |
+| **Reference reader and validator** | [validate.mjs](https://arecformat.org/arec/validate.mjs) and [arec-validate.mjs](https://arecformat.org/arec/arec-validate.mjs) |
+| **Conformance fixtures** | [arecformat.org/arec/fixtures](https://arecformat.org/arec/fixtures/index.json) |
+| **Worked example** | [relay-design-review.arec](https://arecformat.org/arec/examples/relay-design-review.arec) |
+| **Version history** | [AREC changelog](https://arecformat.org/changelog) |
 | **File extension** | `.arec` |
 | **Media type** | `text/markdown; charset=utf-8` |
 | **License** | Public domain (CC0 1.0); validator MIT |
@@ -228,7 +228,7 @@ The JSON Schema at [`/schema/arec-1.3.schema.json`](schema/arec-1.3.schema.json)
 
 AREC is a Markdown document, so several rules cannot be expressed as a schema. The strict check covers them directly: the leading identity comment; the presence of `Metadata`; a `Transcript` section or an explicit statement of its absence; stated completeness; both URLs in the identity comment when Metadata declares `Access: public`; the version rules of section 7.1; JSON blocks in the `Key moments` and `Browser diagnostics` sections (tagged `json`, `jsonc`, `json5`, `ndjson` or `jsonl`, or untagged JSON as defined in section 5) that parse as arrays (a `Key moments` block tagged `json` that does not parse is an error); and the section 5 rules in every JSON block in a diagnostics section: no sensitive keys, no string that begins with a URL carrying a raw query value, and no block that should hold JSON but does not parse. A legacy document passes only as legacy: the check reports it as such, never as conforming to the current version.
 
-The conformance fixtures come in both directions, and every one is published under [`/arec/fixtures/`](https://clipy.online/arec/fixtures/index.json). The `valid` set holds documents that pass the strict check, including a hosted recording, an imported bundle, and legacy documents produced by earlier Clipy releases: a 0.3 hosted document, a 0.3 Mac local recording, an early CLI bundle and a hosted `recording.md` from before identity comments. The `invalid` set holds documents the strict check flags, each for one rule, which `fixtures/expected.json` names: a 1.x document without the identity comment, an unknown profile, a public document with no URLs, pointer coordinates outside the unit interval, a motion destination outside the unit interval, diagnostics carrying cookies, a diagnostic URL carrying a query value, a 0.3 document whose diagnostics carry headers, silence about missing capture, and an evidence reference that would force server-side frame extraction. A reader still reads every one of them.
+The conformance fixtures come in both directions, and every one is published under [`/arec/fixtures/`](https://arecformat.org/arec/fixtures/index.json). The `valid` set holds documents that pass the strict check, including a hosted recording, an imported bundle, and legacy documents produced by earlier Clipy releases: a 0.3 hosted document, a 0.3 Mac local recording, an early CLI bundle and a hosted `recording.md` from before identity comments. The `invalid` set holds documents the strict check flags, each for one rule, which `fixtures/expected.json` names: a 1.x document without the identity comment, an unknown profile, a public document with no URLs, pointer coordinates outside the unit interval, a motion destination outside the unit interval, diagnostics carrying cookies, a diagnostic URL carrying a query value, a 0.3 document whose diagnostics carry headers, silence about missing capture, and an evidence reference that would force server-side frame extraction. A reader still reads every one of them.
 
 Producers and consumers disagree most often about what counts as evidence. Two rules settle it. Evidence references must point at precomputed artifacts, which may be absolute `https` URLs for a hosted document or relative paths inside a downloadable bundle, but must never be a frame-extraction endpoint the consumer has to call. And missing capture must be stated, because a document that omits a gap is making a silent claim that nothing happened.
 
@@ -268,7 +268,7 @@ Within the 1.x line these promises hold:
 
 - **Nothing breaks.** The identity fields, the profiles, the required sections and the conformance rules in this document stay valid for every 1.x release. A document that conforms to 1.3 conforms to every later 1.x.
 - **Additions only.** A minor release MAY add optional sections, optional fields, profiles or pointer `source` values. It MUST NOT remove or redefine anything a 1.3 document relies on.
-- **Breaking changes need 2.0.** A change that would make a conformant 1.x document non-conformant, or change the meaning of an existing field, is reserved for a new major version, announced in the [changelog](https://clipy.online/spec/changelog) before it ships.
+- **Breaking changes need 2.0.** A change that would make a conformant 1.x document non-conformant, or change the meaning of an existing field, is reserved for a new major version, announced in the [changelog](https://arecformat.org/changelog) before it ships.
 
 Consumers MUST read any document whose `spec_version` has major version 1, including minor versions newer than they know. A consumer that meets an unfamiliar major version reads it on a best-effort basis, using the sections it recognizes, and flags the version; it does not refuse the document. Producers SHOULD declare the version they actually follow.
 
@@ -289,7 +289,7 @@ A document written by an older producer never stops being readable because a new
 | 0.2 | July 2026 | Superseded; documents stay readable (section 7.1) |
 | 0.1 | June 2026 | Superseded; documents stay readable (section 7.1) |
 
-The format was briefly published as OAR (Open Agent Recording) before being renamed to avoid a collision with the existing `.oar` archive extension. This page always shows the current version; the [changelog](https://clipy.online/spec/changelog) records every change and the additions being considered for 1.4.
+The format was briefly published as OAR (Open Agent Recording) before being renamed to avoid a collision with the existing `.oar` archive extension. This page always shows the current version; the [changelog](https://arecformat.org/changelog) records every change and the additions being considered for 1.4.
 
 ## 8. Implementations
 
@@ -313,7 +313,7 @@ The Clipy name and logo are Clipy's trademarks and are not covered by these gran
 
 ## 10. How to cite
 
-> AREC (Agent Recording) Specification, version 1.3. Clipy, 15 October 2026. https://clipy.online/spec
+> AREC (Agent Recording) Specification, version 1.3. Clipy, 15 October 2026. https://arecformat.org/spec
 
 Cite the version you implement. The changelog lists every version and what changed in it.
 
@@ -333,7 +333,3 @@ Cite the version you implement. The changelog lists every version and what chang
 - [Anatomy of an AREC document](https://clipy.online/learn/markdown-twin-anatomy), an annotated walkthrough.
 - [How to give your agent video context](https://clipy.online/learn/give-agents-video-context)
 - [Agent context formats compared](https://clipy.online/learn/agent-context-formats-compared)
-
----
-
-*Record once. Paste the link. Your agent does the rest. clipy.online.*

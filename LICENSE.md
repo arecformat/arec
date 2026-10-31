@@ -5,7 +5,7 @@ for any purpose, with no permission and no attribution required.
 
 ## Specification, schema, fixtures, example and website text: CC0 1.0
 
-The AREC specification (https://clipy.online/spec), the JSON Schema in
+The AREC specification (https://arecformat.org/spec), the JSON Schema in
 `schema/`, the documents in `fixtures/` and `examples/`, and the website's
 text and images in `site/content/` and `site/static/` are dedicated to the
 public domain.

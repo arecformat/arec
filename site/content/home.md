@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-30
+updated: 2026-10-31
 title: AREC: open file format for agent-readable screen recordings
 description: AREC (Agent Recording) is an open Markdown file format that lets AI agents read a screen recording: intent, key moments, diagnostics and transcript.
 ---
@@ -18,6 +18,7 @@ schema and test fixtures are in the public domain (CC0 1.0), and the reference
 validator is MIT licensed. Anyone can write or read AREC without asking.
 
 [Read the specification](/spec) · [What is an .arec file?](/arec-file) ·
+[Implementations](/implementations) · [Research](/research) ·
 [Source on GitHub](https://github.com/arecformat/arec)
 
 ## Why a file format for recordings
@@ -34,7 +35,7 @@ directly:
 - **Key moments:** timestamped moments with pointer positions, clicks and
   highlights, linked to precomputed frames.
 - **Browser diagnostics:** console errors and failed requests, which a producer
-  must redact: no headers, cookies, tokens or raw query values.
+  must redact: no headers, bodies, cookies, tokens or raw query values.
 - **Capture gaps:** an explicit statement of what was not recorded, so missing
   evidence is never read as proof that nothing happened.
 - **Transcript:** the full spoken text, with timestamps.
@@ -122,8 +123,27 @@ Android apps, CLI and MCP server, and for videos imported with its CLI. Any
 agent that can read a URL or a Markdown file can read AREC: Claude Code, Codex,
 Cursor, ChatGPT and others need nothing special.
 
+People use it to hand bug reports and design feedback to coding agents, to
+have an agent return proof of the work it verified, and to turn existing
+videos into context an agent can search. [AREC implementations](/implementations)
+lists the recorders, the agents and how AREC has developed.
+
 Building a recorder, a reader or a port of the validator? Open an issue or a
 pull request on [GitHub](https://github.com/arecformat/arec) to be listed.
+
+## What the research shows
+
+In a controlled benchmark, a coding agent given a fully populated AREC document
+completed a recorded design review in 4 of 5 runs, and in none when given the
+transcript or the raw video. It scored 11.8 of 12 on average with AREC, against
+5.8 with the transcript and 2.4 with the video. The agent could not take video
+input, so the raw-video runs worked from frames it extracted, without the
+audio, and the AREC document's request text was written by the study team.
+A transcript keeps the words but loses what "this" and "that" point at; an
+AREC document keeps the request and its target together. In a second study, the agent needed the frames an
+AREC document links to in order to complete a scripted recording's requests.
+[Read the research](/research), including how AREC compares with video files,
+captions, HAR files, session replays and test traces.
 
 ## Frequently asked questions
 

@@ -5,14 +5,16 @@
 //   /           content/home.md
 //   /spec       ../SPEC.md       (plain text at /spec.md)
 //   /arec-file  content/arec-file.md
+//   /implementations  content/implementations.md
+//   /research   content/research.md
 //   /changelog  ../CHANGELOG.md  (plain text at /changelog.md)
 // Files served beside them come from ../scripts/public-files.mjs, the same
 // function every other host uses: the schema, the reader and validator, the
 // conformance fixtures and the worked example. static/** is copied as is
 // (social images).
 //
-// The specification text is the source of truth. Links in it to the spec's
-// clipy.online addresses, where it was first published, are rewritten to this
+// The specification text is the source of truth. It links this site directly;
+// any link left to the spec's first home on clipy.online is rewritten to this
 // site in the rendered pages and the .md copies. The schema keeps its $id.
 //
 //   cd site && npm ci && npm run build
@@ -168,6 +170,8 @@ const NAV = [
   ['/', 'Overview'],
   ['/spec', 'Specification'],
   ['/arec-file', '.arec files'],
+  ['/implementations', 'Implementations'],
+  ['/research', 'Research'],
   ['/changelog', 'Changelog'],
   [REPO, 'GitHub'],
 ];
@@ -218,7 +222,7 @@ ${head}
 <a class="skip" href="#main">Skip to content</a>
 <header class="site"><a class="brand" href="/">AREC</a><nav class="primary" aria-label="Site">${nav}</nav></header>
 <div class="layout">${contents}<main id="main">${crumbsHtml}${body}</main></div>
-<footer class="site"><span>AREC (Agent Recording) is an open format edited by <a href="https://clipy.online" rel="noopener">Clipy</a>.</span><span>Specification, schema and fixtures: CC0 1.0. Validator: MIT.</span><span><a href="${REPO}" rel="noopener">Source on GitHub</a></span></footer>
+<footer class="site"><span>AREC (Agent Recording): the open file format for agent-readable screen recordings.</span><span>Specification, schema and fixtures: CC0 1.0. Validator: MIT.</span><span><a href="${REPO}" rel="noopener">Source on GitHub</a></span></footer>
 </body>
 </html>
 `;
@@ -316,20 +320,25 @@ const pages = [];
   write('spec.md', spec);
 }
 
-// The .arec file page.
-{
-  const { meta, body } = frontMatter(readContent('arec-file.md'));
+// Article pages written in content/.
+for (const { name, crumb, imageAlt } of [
+  { name: 'arec-file', crumb: '.arec files', imageAlt: 'What is an .arec file?' },
+  { name: 'implementations', crumb: 'Implementations', imageAlt: 'AREC implementations' },
+  { name: 'research', crumb: 'Research', imageAlt: 'AREC research' },
+]) {
+  const { meta, body } = frontMatter(readContent(`${name}.md`));
   const r = render(body);
-  const crumbs = [{ name: 'AREC', path: '/' }, { name: '.arec files', path: '/arec-file' }];
-  pages.push({ path: '/arec-file', file: 'arec-file.html', updated: meta.updated });
-  write('arec-file.html', page({
-    urlPath: '/arec-file',
+  const urlPath = `/${name}`;
+  const crumbs = [{ name: 'AREC', path: '/' }, { name: crumb, path: urlPath }];
+  pages.push({ path: urlPath, file: `${name}.html`, updated: meta.updated });
+  write(`${name}.html`, page({
+    urlPath,
     title: meta.title,
     description: meta.description,
     body: r.html,
     toc: r.toc,
-    image: '/og/arec-file.png',
-    imageAlt: 'What is an .arec file?',
+    image: `/og/${name}.png`,
+    imageAlt,
     crumbs,
     ld: [
       {
@@ -337,11 +346,11 @@ const pages = [];
         '@type': 'TechArticle',
         headline: r.h1,
         description: meta.description,
-        url: `${SITE}/arec-file`,
+        url: `${SITE}${urlPath}`,
         dateModified: meta.updated,
         inLanguage: 'en',
         publisher: ORGANIZATION,
-        image: `${SITE}/og/arec-file.png`,
+        image: `${SITE}/og/${name}.png`,
       },
       breadcrumbLd(crumbs),
     ],
@@ -403,6 +412,8 @@ write('llms.txt', `# AREC (Agent Recording)
 - [Overview](${SITE}/)
 - [Specification (plain text)](${SITE}/spec.md)
 - [What is an .arec file](${SITE}/arec-file)
+- [AREC implementations](${SITE}/implementations)
+- [Research: agents with AREC vs video and transcripts](${SITE}/research)
 - [Changelog (plain text)](${SITE}/changelog.md)
 - [JSON Schema 1.3](${SITE}/schema/arec-1.3.schema.json)
 - [Reference reader and validator](${SITE}/arec/validate.mjs)
@@ -448,6 +459,8 @@ write('_redirects', `/spec/ /spec 301
 /spec/changelog/ /changelog 301
 /changelog/ /changelog 301
 /arec-file/ /arec-file 301
+/implementations/ /implementations 301
+/research/ /research 301
 /index.html / 301
 `);
 
