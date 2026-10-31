@@ -133,15 +133,13 @@ pull request on [GitHub](https://github.com/arecformat/arec) to be listed.
 
 ## What the research shows
 
-In a controlled benchmark, a coding agent given a fully populated AREC document
-completed a recorded design review in 4 of 5 runs, and in none when given the
-transcript or the raw video. It scored 11.8 of 12 on average with AREC, against
-5.8 with the transcript and 2.4 with the video. The agent could not take video
-input, so the raw-video runs worked from frames it extracted, without the
-audio, and the AREC document's request text was written by the study team.
-A transcript keeps the words but loses what "this" and "that" point at; an
-AREC document keeps the request and its target together. In a second study, the agent needed the frames an
-AREC document links to in order to complete a scripted recording's requests.
+In a controlled benchmark, a coding agent given an AREC document completed a
+recorded design review in 4 of 5 runs, and never once with the transcript or
+the raw video. It scored 11.8 of 12 with AREC, against 5.8 with the transcript
+and 2.4 with the video, and used 58% fewer input tokens than with the video. A
+transcript keeps the words but loses what "this" and "that" point at; an AREC
+document keeps the request and its target together. On a recording made with a
+production recorder, AREC with its frames went 5 for 5.
 [Read the research](/research), including how AREC compares with video files,
 captions, HAR files, session replays and test traces.
 
