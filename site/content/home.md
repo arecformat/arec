@@ -140,6 +140,8 @@ and 2.4 with the video, and used 58% fewer input tokens than with the video. A
 transcript keeps the words but loses what "this" and "that" point at; an AREC
 document keeps the request and its target together. On a recording made with a
 production recorder, AREC with its frames went 5 for 5.
+Recorders that do not write AREC give an agent a video file or a transcript:
+the two inputs AREC outscored in the benchmark.
 [Read the research](/research), including how AREC compares with video files,
 captions, HAR files, session replays and test traces.
 

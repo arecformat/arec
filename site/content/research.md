@@ -120,6 +120,22 @@ What it shows:
 
 Full write-up and data: [From "this button" to working edits](https://clipy.online/research/arec-visual-case-study).
 
+## What this means for screen recorders
+
+Clipy is the only screen recorder that writes AREC so far. Every recorder can
+give an agent a video file, and many also export a transcript: the two inputs
+the benchmark measured against AREC.
+
+| What the agent receives | Mean score (of 12) | Fully completed |
+| --- | --- | --- |
+| **An AREC document** | **11.8** | **4 of 5** |
+| A transcript | 5.8 | 0 of 5 |
+| A video file | 2.4 | 0 of 5 |
+
+An agent given AREC scored about **twice** what it scored with a transcript and
+almost **five times** what it scored with a video file, and AREC was the only
+one of the three that let the agent finish the job.
+
 ## How AREC compares with other recording formats
 
 Each of these formats keeps part of a recording. AREC is the one built to hand
