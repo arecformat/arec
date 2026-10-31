@@ -197,6 +197,13 @@ rules it does not know.
 
 Add yours with a pull request.
 
+## Website
+
+[arecformat.org](https://arecformat.org) is built from `site/` in this
+repository: the overview, the specification, the changelog and the files
+implementers download. To preview it, run `npm ci && npm run build` in `site/`
+(Node 18 or newer), then `npx wrangler pages dev dist` (Node 22 or newer). See [site/README.md](site/README.md).
+
 ## Contributing
 
 The format is meant to be implemented by people who did not write it. If a rule

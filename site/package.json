@@ -1,0 +1,12 @@
+{
+  "name": "arec-site",
+  "private": true,
+  "description": "Static site for arecformat.org, built from the files in this repository.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "markdown-it": "14.3.3"
+  }
+}

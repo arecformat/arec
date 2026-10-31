@@ -3,17 +3,20 @@
 AREC is free for anyone to implement, extend, translate, copy, sell or build on,
 for any purpose, with no permission and no attribution required.
 
-## Specification, schema and fixtures: CC0 1.0
+## Specification, schema, fixtures, example and website text: CC0 1.0
 
 The AREC specification (https://clipy.online/spec), the JSON Schema in
-`schema/` and the documents in `fixtures/` are dedicated to the public domain.
+`schema/`, the documents in `fixtures/` and `examples/`, and the website's
+text and images in `site/content/` and `site/static/` are dedicated to the
+public domain.
 To the extent possible under law, Clipy has waived all copyright and related or
 neighboring rights to them. Full legal text:
 https://creativecommons.org/publicdomain/zero/1.0/legalcode
 
-## Validator: MIT License
+## Validator and tools: MIT License
 
-Applies to `validator/`, `bin/` and `scripts/`.
+Applies to `validator/`, `bin/`, `scripts/`, and the website's code in
+`site/build.mjs` and `site/scripts/`.
 
 Copyright (c) 2026 Clipy
 

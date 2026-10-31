@@ -30,6 +30,7 @@
     "schema/",
     "fixtures/",
     "scripts/",
+    "examples/",
     "SPEC.md",
     "CHANGELOG.md",
     "LICENSE.md"

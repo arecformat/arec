@@ -22,3 +22,18 @@ jobs:
           node-version: ${{ matrix.node }}
       # No dependencies to install: the validator is plain Node.
       - run: npm test
+
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      # The worked example the site serves must pass the strict check.
+      - run: node bin/arec-validate.mjs --strict examples/*.arec
+      # Builds arecformat.org from the files in this repository.
+      - run: npm ci
+        working-directory: site
+      - run: npm run build
+        working-directory: site
