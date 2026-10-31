@@ -122,7 +122,7 @@ Full write-up and data: [From "this button" to working edits](https://clipy.onli
 
 ## What this means for screen recorders
 
-Clipy is the only screen recorder that writes AREC so far. Every recorder can
+Clipy was the first screen recorder to write AREC. Every recorder can
 give an agent a video file, and many also export a transcript: the two inputs
 the benchmark measured against AREC.
 

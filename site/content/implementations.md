@@ -9,8 +9,7 @@ description: Which recorders write AREC, which AI agents can read it, what it is
 AREC has been in daily production use since August 2026, when hosted
 recordings started being published in the field set that became the stable
 1.3 release. This page lists the software that writes and reads AREC today,
-what it is used for, and where the format is heading. Clipy is the only
-recorder that writes AREC so far.
+what it is used for, and where the format is heading. Clipy was the first screen recorder to write AREC.
 
 ## Recorders that write AREC
 
