@@ -14,6 +14,7 @@ the output.
 | `/changelog` and `/changelog.md` | `CHANGELOG.md` |
 | `/schema/`, `/arec/` (validator, fixtures, example) | `scripts/public-files.mjs`, from `schema/`, `validator/`, `bin/`, `fixtures/` and `examples/` |
 | `/og/*.png` | `site/static/og/`, rendered by `site/scripts/og-images.mjs` |
+| `/favicon.ico`, `/icon.svg`, `/apple-touch-icon.png`, `/icon-192.png`, `/icon-512.png` | `site/static/`; the PNG and ICO files are rendered from `icon.svg` by `site/scripts/icons.mjs` |
 
 ## Build and preview
 
@@ -51,3 +52,5 @@ identifier rather than the address it is served from.
   `scripts/og-images.mjs`. After changing it, install Playwright
   (`npm i --no-save playwright && npx playwright install chromium`), run
   `node scripts/og-images.mjs` and commit the new images.
+- The favicons are rendered from `static/icon.svg`. After changing it, run
+  `node scripts/icons.mjs` (same Playwright setup) and commit the new files.

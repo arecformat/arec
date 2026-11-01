@@ -11,7 +11,7 @@
 // Files served beside them come from ../scripts/public-files.mjs, the same
 // function every other host uses: the schema, the reader and validator, the
 // conformance fixtures and the worked example. static/** is copied as is
-// (social images).
+// (favicons and social images).
 //
 // The specification text is the source of truth. It links this site directly;
 // any link left to the spec's first home on clipy.online is rewritten to this
@@ -194,7 +194,10 @@ function page({ urlPath, title, description, markdownAlt, body, toc, image, imag
     `<meta name="description" content="${esc(description)}">`,
     noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`,
     markdownAlt ? `<link rel="alternate" type="text/markdown" href="${markdownAlt}">` : '',
+    '<link rel="icon" href="/favicon.ico" sizes="32x32">',
     '<link rel="icon" href="/icon.svg" type="image/svg+xml">',
+    '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
+    '<link rel="manifest" href="/site.webmanifest">',
     '<meta name="theme-color" content="#b4440e">',
     `<meta property="og:site_name" content="${SITE_NAME}">`,
     `<meta property="og:type" content="${urlPath === '/' ? 'website' : 'article'}">`,
@@ -378,7 +381,7 @@ for (const { name, crumb, imageAlt } of [
   write('changelog.md', changelog);
 }
 
-// Schema, validator, fixtures, examples and social images, byte for byte.
+// Schema, validator, fixtures, examples, favicons and social images, byte for byte.
 for (const [rel, body] of publicFiles({ baseUrl: SITE })) write(rel, body);
 copyTree(path.join(HERE, 'static'), '.');
 
@@ -395,7 +398,18 @@ write('404.html', page({
   noindex: true,
 }));
 
-write('icon.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#b4440e"/><text x="16" y="23" font-family="system-ui,sans-serif" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">A</text></svg>\n');
+// Icons are in static/ (rendered by scripts/icons.mjs); the manifest lists them.
+write('site.webmanifest', `${JSON.stringify({
+  name: 'AREC (Agent Recording)',
+  short_name: SITE_NAME,
+  icons: [
+    { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+  ],
+  theme_color: '#b4440e',
+  background_color: '#fdfcfa',
+  display: 'browser',
+}, null, 2)}\n`);
 
 write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 
@@ -433,6 +447,9 @@ write('_headers', `/*
 /*.md
   Content-Type: text/markdown; charset=utf-8
   Access-Control-Allow-Origin: *
+
+/site.webmanifest
+  Content-Type: application/manifest+json
 
 /*.mjs
   Content-Type: text/javascript; charset=utf-8
