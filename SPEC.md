@@ -14,7 +14,7 @@
 | **File extension** | `.arec` |
 | **Media type** | `text/markdown; charset=utf-8` |
 | **License** | Public domain (CC0 1.0); validator MIT |
-| **Editor** | Clipy, support@clipy.online |
+| **Editor** | Clipy, spec@arecformat.org |
 
 ## Abstract
 
@@ -26,7 +26,7 @@ Any recorder may produce AREC and any agent may consume it, with no license fee,
 
 This is AREC 1.3, the first stable release. It takes the field set published as 0.3 in August 2026, unchanged, and freezes it for the 1.x line: nothing a conformant 1.3 document relies on will be removed or redefined in any later 1.x release. Hosted recordings have been published in this field set since August 2026, so the rules below describe a format in daily production use rather than a proposal.
 
-Questions, implementation reports and proposed additions go to the issue tracker at [github.com/arecformat/arec](https://github.com/arecformat/arec/issues), or to support@clipy.online. An ambiguous rule is treated as a defect in this specification and is fixed in the next minor release.
+Questions, implementation reports and proposed additions go to the issue tracker at [github.com/arecformat/arec](https://github.com/arecformat/arec/issues), or to spec@arecformat.org. An ambiguous rule is treated as a defect in this specification and is fixed in the next minor release.
 
 ## 1. Conventions and terminology
 
@@ -298,7 +298,7 @@ The format was briefly published as OAR (Open Agent Recording) before being rena
 - **The reference reader** reads any AREC text leniently (section 4.3); its optional strict mode checks what a producer writes (section 4.4).
 - **Consumers** need nothing special. Claude Code, Codex, Cursor, ChatGPT and any other agent that can fetch a URL can read an AREC document as Markdown; Clipy's hosted MCP server and CLI also hand AREC to agents directly.
 
-Building a producer or consumer? Run it against the reference reader, the optional strict check and the fixtures, then open an issue or pull request at [github.com/arecformat/arec](https://github.com/arecformat/arec), or write to support@clipy.online, to be listed here.
+Building a producer or consumer? Run it against the reference reader, the optional strict check and the fixtures, then open an issue or pull request at [github.com/arecformat/arec](https://github.com/arecformat/arec), or write to spec@arecformat.org, to be listed here.
 
 ## 9. License
 
