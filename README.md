@@ -215,5 +215,5 @@ and GitHub highlights `.arec` files as Markdown, as this repository does.
 
 ## Feedback
 
-Open an issue, or write to support@clipy.online. Security reports go to
+Open an issue, or write to spec@arecformat.org. Security reports go to
 security@clipy.online ([SECURITY.md](SECURITY.md)).
