@@ -1,5 +1,5 @@
-// AREC (Agent Recording) 1.3 reference reader and validator.
-// SPDX-License-Identifier: MIT. Copyright (c) 2026 Clipy.
+// AREC (Agent Recording) 1.4 reference reader and validator.
+// SPDX-License-Identifier: MIT. Copyright (c) 2026 the AREC authors.
 //
 // Zero dependencies and no build step: run it with any Node 18+ without
 // installing anything.
@@ -19,7 +19,7 @@
 //   const { document, warnings } = readArec(text);
 //   const check = validateArec(text, { mode: 'conform' }); // optional producer check
 
-export const SPEC_VERSION = '1.3';
+export const SPEC_VERSION = '1.4';
 
 // Versioning (specification section 7, "Backward compatibility guarantee").
 // A 1.x document is checked against every rule here. Every earlier published
@@ -32,7 +32,7 @@ export const SPEC_VERSION = '1.3';
 //
 // MAJOR and MINOR are non-negative integers written without leading zeros, so
 // `1.03` is not a version (no producer has ever written one). A pre-release
-// suffix never changes which minor a version is: `1.3-rc.1` is 1.3.
+// suffix never changes which minor a version is: `1.4-rc.1` is 1.4.
 const NUMBER = '(?:0|[1-9][0-9]*)';
 // End of input. `$` also matches before a final newline in some regular
 // expression engines (Python's `re`), so every exported pattern ends with this
@@ -55,8 +55,8 @@ function isKnownVersion(version) {
 
 // A 1.x minor newer than this validator may add profiles and pointer sources,
 // so values this validator does not know are reported as warnings there. The
-// minor is compared as a number (4 and up), whatever suffix follows it.
-export const NEWER_MINOR_PATTERN = `^1\\.(?:[4-9]|[1-9][0-9]+)${SUFFIX}${END}`;
+// minor is compared as a number (5 and up), whatever suffix follows it.
+export const NEWER_MINOR_PATTERN = `^1\\.(?:[5-9]|[1-9][0-9]+)${SUFFIX}${END}`;
 function isNewerMinor(version) {
   return new RegExp(NEWER_MINOR_PATTERN).test(version || '');
 }
@@ -64,7 +64,17 @@ function isNewerMinor(version) {
 /** `spec_version` is MAJOR.MINOR, optionally with a pre-release suffix (0.3-draft). */
 export const SPEC_VERSION_PATTERN = `^${NUMBER}\\.${NUMBER}${SUFFIX}${END}`;
 
-export const PROFILES = ['clipy-recording', 'imported-context'];
+export const PROFILES = ['recording', 'imported-context'];
+
+// 1.3 named the recording profile `clipy-recording`. It stays valid in every
+// 1.x document and means exactly the same profile, so 1.3 documents keep
+// conforming (section 7); producers following 1.4 write `recording`.
+export const PROFILE_ALIASES = { 'clipy-recording': 'recording' };
+
+/** The profile a header value names, with the 1.3 alias resolved. */
+export function canonicalProfile(profile) {
+  return Object.hasOwn(PROFILE_ALIASES, profile) ? PROFILE_ALIASES[profile] : profile;
+}
 
 export const POINTER_SOURCES = [
   'click',
@@ -616,10 +626,13 @@ function checkArec(text, source, mode) {
 
     if (!header.profile) {
       errors.push('Identity comment is missing the required field `profile`.');
-    } else if (!PROFILES.includes(header.profile)) {
+    } else if (!PROFILES.includes(canonicalProfile(header.profile))) {
       (isNewerMinor(header.spec_version) ? warnings : errors).push(
-        `Unknown \`profile\`: ${header.profile}. Expected one of ${PROFILES.join(', ')}.`,
+        `Unknown \`profile\`: ${header.profile}. Expected one of ${[...PROFILES, ...Object.keys(PROFILE_ALIASES)].join(', ')}.`,
       );
+    } else if (header.profile === 'recording' && /^(?:0\.|1\.[0-3](?![0-9]))/.test(header.spec_version || '')) {
+      // A 1.3 checker does not know this name, so it belongs in 1.4 documents.
+      warnings.push('Profile `recording` was introduced in 1.4; a document declaring an earlier version writes `clipy-recording`.');
     }
 
     // watch_url is a human-facing address, so it must be resolvable anywhere.
@@ -825,14 +838,14 @@ function checkArec(text, source, mode) {
 
   // Recommended, not required. Warnings never fail a document, because the
   // specification says a consumer must keep reading past what it does not find.
-  if (header && header.profile === 'clipy-recording') {
+  if (header && canonicalProfile(header.profile) === 'recording') {
     for (const [pattern, label] of [
       [/^intent\b/i, 'Intent'],
       [/^summary\b/i, 'Summary'],
       [/^key moments?\b/i, 'Key moments'],
     ]) {
       if (!hasHeading(scan, pattern)) {
-        warnings.push(`Profile clipy-recording usually contains a \`${label}\` section.`);
+        warnings.push(`Profile recording usually contains a \`${label}\` section.`);
       }
     }
   }

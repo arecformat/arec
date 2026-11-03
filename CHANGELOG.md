@@ -1,12 +1,12 @@
 # AREC changelog
 
-All notable changes to the AREC format. 1.3 is the current, stable version.
+All notable changes to the AREC format. 1.4 is the current, stable version.
 Within 1.x nothing a conformant document relies on is removed or redefined;
 breaking changes are reserved for 2.0.
 
 ## Unreleased
 
-Nothing yet. Proposals being considered for 1.4, each an optional addition:
+Nothing yet. Proposals being considered for 1.5, each an optional addition:
 
 - Element identity on a key moment: a role and label beside the coordinate, so a
   consumer knows what was pointed at and not only where. The ecosystem has
@@ -22,6 +22,22 @@ Nothing yet. Proposals being considered for 1.4, each an optional addition:
   1.3.1 does not yet check.
 - Fenced blocks inside blockquotes and list items, which readers do not yet
   scan.
+
+## 1.4, November 2026
+
+- The recording profile is named `recording`. The name 1.3 used stays valid
+  and means the same profile in every 1.x document (specification section
+  3.1), so every 1.3 document conforms to 1.4 unchanged. Producers following 1.4
+  write `recording`, and the profile covers a recording from any screen
+  recorder.
+- Schema at `schema/arec-1.4.schema.json`, identified as
+  https://arecformat.org/schema/arec-1.4.schema.json. Its profile rule accepts
+  both names. `schema/arec-1.3.schema.json` is kept as published.
+- The worked example is a 1.4 document, served with its frames from
+  arecformat.org. Added the `profile-name-1.3.arec` fixture.
+- The validator, its runner, the fixtures and the example are served from
+  https://arecformat.org; the fixture index is
+  https://arecformat.org/arec/fixtures/index.json.
 
 ## Reference implementation 1.3.1, October 2026
 
@@ -97,8 +113,7 @@ tagged `text` instead.
 - Documented the `deixis` and `narration` pointer sources. An absent or `null`
   field means not captured. Unknown `source` values are ignored.
 - The validator, its runner, the fixtures and a worked example are served
-  from clipy.online; the fixture index is
-  https://clipy.online/arec/fixtures/index.json.
+  beside the specification.
 - Reading is lenient (specification sections 4.2 and 7.1): a reader never
   refuses a document for its version, structure or unknown content. It reads
   every earlier version (any 0.x value with or without a suffix, and documents
@@ -142,7 +157,7 @@ tagged `text` instead.
 ## 0.3, August 2026
 
 - Added the `imported-context` profile for bundles compiled from an external
-  video, alongside the existing `clipy-recording` profile for hosted recordings.
+  video, alongside the existing profile for hosted recordings.
 - Made `.arec` the canonical extension. `.md` remains a byte-identical
   compatibility representation, and when present it should advertise the `.arec`
   URL as canonical.

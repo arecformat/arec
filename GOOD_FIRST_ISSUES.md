@@ -20,7 +20,7 @@ nothing covers the rejected one. Add `missing-transcript-unexplained.arec`.
 
 ## Add an invalid fixture: spec_version that is not semver-style
 
-`spec_version` must be a MAJOR.MINOR version such as `1.3`. Add a fixture whose
+`spec_version` must be a MAJOR.MINOR version such as `1.4`. Add a fixture whose
 identity comment uses something like `spec_version: latest` and check the
 strict check rejects it for that reason alone.
 
@@ -52,7 +52,7 @@ request; those are specification bugs.
 
 ## Check the machine-readable parts against the JSON Schema
 
-`schema/arec-1.3.schema.json` describes the identity header, key moments and
+`schema/arec-1.4.schema.json` describes the identity header, key moments and
 browser diagnostics, but the validator checks those by hand and never loads
 the schema. Add an optional `--schema` mode that validates the extracted
 objects against the schema, without adding a runtime dependency to the default

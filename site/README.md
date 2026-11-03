@@ -35,9 +35,8 @@ reads and redirects the host applies; `wrangler pages dev` reads them, so the
 preview behaves like the live site. A plain static server such as
 `python3 -m http.server` does not, and `/spec` returns 404 there.
 
-The build rewrites links in the specification text from its first address
-(clipy.online/spec) to this site. The schema keeps its `$id`, which is a fixed
-identifier rather than the address it is served from.
+Each schema keeps its `$id`, which is a fixed identifier rather than the
+address it is served from.
 
 ## Checklist for every page
 

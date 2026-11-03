@@ -10,14 +10,14 @@
 - Duration: 00:12
 - Profile: transcript
 - Transcript: creator-provided captions · 2 segments · language en
-- Compiler: @clipy/cli 0.4.0
+- Compiler: example-importer 0.4.0
 - Compiled: 2026-08-02T10:00:00.000Z
 
 ## How to use this bundle
 
 - `recording.md` (this file) is the document; `manifest.json` carries provenance and hashes; `transcript.json` has the raw timestamped segments.
 - This is a transcript-only bundle: no frames were extracted. Absence of visual evidence is not evidence that nothing happened on screen.
-- This bundle has not been classified. Whether the transcript alone is enough is decided server-side when the bundle is synced (`clipy context import … --sync`); until then no claim either way is being made here.
+- This bundle has not been classified. Whether the transcript alone is enough is decided server-side when the bundle is synced; until then no claim either way is being made here.
 
 ## Transcript
 

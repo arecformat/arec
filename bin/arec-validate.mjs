@@ -5,7 +5,7 @@
 //   node bin/arec-validate.mjs recording.arec            read leniently (default)
 //   node bin/arec-validate.mjs --strict recording.arec   optional producer check
 //   node bin/arec-validate.mjs --json fixtures/valid/*.arec
-//   curl -fs https://clipy.online/video/<id>.arec | node bin/arec-validate.mjs -
+//   curl -fs https://example.com/video/<id>.arec | node bin/arec-validate.mjs -
 //
 // By default every text document is read and the exit code is 0; problems are
 // printed as warnings, and sensitive diagnostic keys are reported as redacted.

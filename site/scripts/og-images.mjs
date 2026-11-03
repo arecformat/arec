@@ -12,8 +12,8 @@ const { chromium } = require('playwright');
 
 const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../static/og');
 const CARDS = [
-  ['home', 'The open file format for agent-readable screen recordings', 'Version 1.3 · stable · CC0'],
-  ['spec', 'AREC 1.3 specification', 'Identity, sections, conformance, security and versioning'],
+  ['home', 'The open file format for agent-readable screen recordings', 'Version 1.4 · stable · CC0'],
+  ['spec', 'AREC 1.4 specification', 'Identity, sections, conformance, security and versioning'],
   ['arec-file', 'What is an .arec file?', 'Plain Markdown that lets AI agents read a screen recording'],
   ['implementations', 'AREC implementations', 'Recorders that write it, agents that read it, and what for'],
   ['research', 'What agents do with a recording', 'AREC vs raw video and transcripts, in a benchmark and a case study'],

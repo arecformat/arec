@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-31
+updated: 2026-11-03
 title: AREC: open file format for agent-readable screen recordings
 description: AREC (Agent Recording) is an open Markdown file format that lets AI agents read a screen recording: intent, key moments, diagnostics and transcript.
 ---
@@ -13,7 +13,7 @@ screen, so an agent such as Claude Code, Codex or Cursor can act on a recording
 without decoding the video, and can trace every conclusion back to the moment
 it came from.
 
-The current version is **AREC 1.3**, a stable release. The specification,
+The current version is **AREC 1.4**, a stable release. The specification,
 schema and test fixtures are in the public domain (CC0 1.0), and the reference
 validator is MIT licensed. Anyone can write or read AREC without asking.
 
@@ -47,8 +47,8 @@ sections:
 
 ````markdown
 <!-- arec
-spec_version: 1.3
-profile: clipy-recording
+spec_version: 1.4
+profile: recording
 canonical_url: https://example.com/video/k3m8q2x7w9pz.arec
 watch_url: https://example.com/video/k3m8q2x7w9pz
 -->
@@ -57,7 +57,7 @@ watch_url: https://example.com/video/k3m8q2x7w9pz
 
 ## Metadata
 - Format: AREC (Agent Recording)
-- Spec version: 1.3
+- Spec version: 1.4
 - Access: public
 
 ## Summary
@@ -84,11 +84,9 @@ is available to download.
 
 ## See AREC in action
 
-[From "this button" to working edits](https://clipy.online/research/arec-visual-case-study)
-shows a design review recorded with Clipy: play the recording, see the frames
-its AREC document links to, open the document itself, and read what a coding
-agent did with it. The [coding benchmark](https://clipy.online/research/arec-coding-benchmark)
-publishes its source video, AREC document and result data.
+[Research](/research) shows a recorded design review beside its AREC document
+and the frames it links to, what a coding agent did with it, and a coding
+benchmark that publishes its source video, AREC document and result data.
 
 ## Reading and checking AREC
 
@@ -108,7 +106,7 @@ node bin/arec-validate.mjs ../recording.arec
 
 Producers can run the same rules strictly with `--strict`, check the
 machine-readable parts against the
-[JSON Schema](/schema/arec-1.3.schema.json), and test themselves against the
+[JSON Schema](/schema/arec-1.4.schema.json), and test themselves against the
 [conformance fixtures](/arec/fixtures/index.json).
 
 ## Key facts
@@ -116,7 +114,7 @@ machine-readable parts against the
 | | |
 | --- | --- |
 | Name | AREC (Agent Recording) |
-| Current version | 1.3, stable |
+| Current version | 1.4, stable |
 | File extension | `.arec` |
 | Media type | `text/markdown; charset=utf-8` |
 | Encoding | UTF-8 Markdown (CommonMark) |
@@ -125,9 +123,8 @@ machine-readable parts against the
 
 ## Who writes and reads AREC
 
-[Clipy](https://clipy.online) writes an AREC document for every hosted
-recording, from its web recorder, Chrome extension, Mac, Windows, iPhone and
-Android apps, CLI and MCP server, and for videos imported with its CLI. Any
+Screen recorders write AREC for the recordings they host or save, and import
+tools write it for existing videos. Any
 agent that can read a URL or a Markdown file can read AREC: Claude Code, Codex,
 Cursor, ChatGPT and others need nothing special.
 
@@ -169,7 +166,7 @@ assert any patent against an implementation.
 
 ### Is AREC stable?
 
-Yes. Version 1.3 is the first stable release. Within 1.x nothing a conformant
+Yes. Version 1.3 was the first stable release, and 1.4 is the current one. Within 1.x nothing a conformant
 document relies on is removed or redefined; minor releases only add optional
 sections, fields, profiles and values, and breaking changes are reserved for 2.0. The
 [changelog](/changelog) lists every version.

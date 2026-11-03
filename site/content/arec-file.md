@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-31
+updated: 2026-11-03
 title: What is an .arec file and how do I open it?
 description: An .arec file is an AREC (Agent Recording) document: plain Markdown describing a screen recording for AI agents. Open it in any text editor.
 ---
@@ -49,13 +49,13 @@ An AREC document begins with an identity comment:
 
 ```markdown
 <!-- arec
-spec_version: 1.3
-profile: clipy-recording
+spec_version: 1.4
+profile: recording
 -->
 ```
 
-The comment names the AREC version and the profile: `clipy-recording` for a
-recording made with Clipy, or `imported-context` for a document compiled from
+The comment names the AREC version and the profile: `recording` for a
+screen recording, or `imported-context` for a document compiled from
 an existing video. After it come a title and sections such as `Metadata`,
 `Key moments`, `Capture gaps` and `Transcript`. Documents written before
 identity comments existed are still read as AREC.
@@ -86,11 +86,10 @@ check, listed in specification section 4.4.
 
 ## Which programs create .arec files?
 
-[Clipy](https://clipy.online) writes an `.arec` document for every hosted
-recording, at the recording's watch URL with `.arec` appended, and for videos
-imported with its command-line tool. The format is open, so any recorder can
-write it; implementations are listed in the
-[specification](/spec#8-implementations).
+A hosted recorder serves an `.arec` document at the recording's watch URL
+with `.arec` appended, and import tools write one for an existing video. The
+format is open, so any recorder can write it; the programs that do are listed
+on the [implementations page](/implementations).
 
 ## Is an .arec file safe to open?
 

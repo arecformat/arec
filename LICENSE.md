@@ -9,8 +9,8 @@ The AREC specification (https://arecformat.org/spec), the JSON Schema in
 `schema/`, the documents in `fixtures/` and `examples/`, and the website's
 text and images in `site/content/` and `site/static/` are dedicated to the
 public domain.
-To the extent possible under law, Clipy has waived all copyright and related or
-neighboring rights to them. Full legal text:
+To the extent possible under law, the AREC authors have waived all copyright
+and related or neighboring rights to them. Full legal text:
 https://creativecommons.org/publicdomain/zero/1.0/legalcode
 
 ## Validator and tools: MIT License
@@ -18,7 +18,7 @@ https://creativecommons.org/publicdomain/zero/1.0/legalcode
 Applies to `validator/`, `bin/`, `scripts/`, and the website's code in
 `site/build.mjs` and `site/scripts/`.
 
-Copyright (c) 2026 Clipy
+Copyright (c) 2026 the AREC authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -39,12 +39,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Patents
 
-Clipy will not assert any patent claim against anyone for making, using,
-selling or distributing an implementation of AREC.
+The AREC authors will not assert any patent claim against anyone for making,
+using, selling or distributing an implementation of AREC.
 
 ## Names
 
 Anyone may say their software reads or writes AREC. To call an implementation
 conformant, it should pass the validator and the fixtures for the version it
-claims. The Clipy name and logo are trademarks of Clipy and are not covered by
-these grants.
+claims.

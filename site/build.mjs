@@ -13,9 +13,6 @@
 // conformance fixtures and the worked example. static/** is copied as is
 // (favicons and social images).
 //
-// The specification text is the source of truth. It links this site directly;
-// any link left to the spec's first home on clipy.online is rewritten to this
-// site in the rendered pages and the .md copies. The schema keeps its $id.
 //
 //   cd site && npm ci && npm run build
 import fs from 'node:fs';
@@ -34,29 +31,6 @@ const OUT = path.join(HERE, 'dist');
 
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const readContent = (name) => fs.readFileSync(path.join(HERE, 'content', name), 'utf8');
-
-// Longest paths first, so /spec.md and /spec/changelog are not caught by /spec.
-const URL_MAP = [
-  [/https:\/\/clipy\.online\/spec\/changelog/g, `${SITE}/changelog`],
-  [/https:\/\/clipy\.online\/spec\.md/g, `${SITE}/spec.md`],
-  [/https:\/\/clipy\.online\/spec(?![\w./-])/g, `${SITE}/spec`],
-  [/https:\/\/clipy\.online\/schema\/arec-/g, `${SITE}/schema/arec-`],
-  [/https:\/\/clipy\.online\/arec\//g, `${SITE}/arec/`],
-];
-// Bare link text such as "[clipy.online/spec](...)".
-const TEXT_MAP = [
-  [/clipy\.online\/spec\/changelog/g, 'arecformat.org/changelog'],
-  [/clipy\.online\/spec\.md/g, 'arecformat.org/spec.md'],
-  [/clipy\.online\/spec(?![\w./-])/g, 'arecformat.org/spec'],
-  [/clipy\.online\/arec\/fixtures/g, 'arecformat.org/arec/fixtures'],
-];
-
-function rewrite(text) {
-  let out = text;
-  for (const [re, to] of URL_MAP) out = out.replace(re, to);
-  for (const [re, to] of TEXT_MAP) out = out.replace(re, to);
-  return out;
-}
 
 const md = new MarkdownIt({ html: false, linkify: false, typographer: false });
 
@@ -255,7 +229,7 @@ function firstSentence(markdown, heading) {
   return text.match(/^.+?\.(?=\s|$)/)?.[0] ?? text;
 }
 
-const ORGANIZATION = { '@type': 'Organization', name: 'Clipy', url: 'https://clipy.online' };
+const ORGANIZATION = { '@type': 'Organization', name: SITE_NAME, url: `${SITE}/` };
 const breadcrumbLd = (crumbs) => ({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -264,9 +238,9 @@ const breadcrumbLd = (crumbs) => ({
 
 fs.rmSync(OUT, { recursive: true, force: true });
 
-const spec = rewrite(read('SPEC.md'));
+const spec = read('SPEC.md');
 const specUpdated = isoDate(spec.match(/\*\*Updated\*\* \| ([^|]+)\|/)?.[1] ?? '') ?? new Date().toISOString().slice(0, 10);
-const specVersion = spec.match(/\*\*Version\*\* \| ([0-9.]+)/)?.[1] ?? '1.3';
+const specVersion = spec.match(/\*\*Version\*\* \| ([0-9.]+)/)?.[1] ?? '1.4';
 const pages = [];
 
 // Overview.
@@ -362,14 +336,14 @@ for (const { name, crumb, imageAlt } of [
 
 // Changelog.
 {
-  const changelog = rewrite(read('CHANGELOG.md'));
+  const changelog = read('CHANGELOG.md');
   const r = render(changelog);
   const crumbs = [{ name: 'AREC', path: '/' }, { name: 'Changelog', path: '/changelog' }];
   pages.push({ path: '/changelog', file: 'changelog.html', updated: specUpdated });
   write('changelog.html', page({
     urlPath: '/changelog',
     title: 'AREC changelog: every version of the Agent Recording format',
-    description: 'Every version of the AREC (Agent Recording) format and what changed in it, from 0.1 to the stable 1.3 release.',
+    description: 'Every version of the AREC (Agent Recording) format and what changed in it, from 0.1 to the stable 1.4 release.',
     markdownAlt: '/changelog.md',
     body: r.html,
     toc: r.toc,
@@ -429,7 +403,7 @@ write('llms.txt', `# AREC (Agent Recording)
 - [AREC implementations](${SITE}/implementations)
 - [Research: agents with AREC vs video and transcripts](${SITE}/research)
 - [Changelog (plain text)](${SITE}/changelog.md)
-- [JSON Schema 1.3](${SITE}/schema/arec-1.3.schema.json)
+- [JSON Schema 1.4](${SITE}/schema/arec-1.4.schema.json)
 - [Reference reader and validator](${SITE}/arec/validate.mjs)
 - [Conformance fixtures](${SITE}/arec/fixtures/index.json)
 - [Source](${REPO})
@@ -469,7 +443,7 @@ write('_headers', `/*
   Link: <${SITE}/changelog>; rel="canonical"
 
 /arec/examples/relay-design-review.arec
-  Link: <https://clipy.online/arec/examples/relay-design-review.arec>; rel="canonical"
+  Link: <${SITE}/arec/examples/relay-design-review.arec>; rel="canonical"
 `);
 write('_redirects', `/spec/ /spec 301
 /spec/changelog /changelog 301
