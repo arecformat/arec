@@ -1,12 +1,12 @@
-# AREC (Agent Recording) Specification 1.3
+# AREC (Agent Recording) Specification 1.4
 
 | Specification | AREC (Agent Recording) |
 | --- | --- |
-| **Version** | 1.3 (stable) |
-| **Updated** | 30 October 2026 |
+| **Version** | 1.4 (stable) |
+| **Updated** | 3 November 2026 |
 | **Latest version** | [arecformat.org/spec](https://arecformat.org/spec) |
 | **Plain text** | [arecformat.org/spec.md](https://arecformat.org/spec.md) |
-| **JSON Schema** | [arec-1.3.schema.json](https://arecformat.org/schema/arec-1.3.schema.json) |
+| **JSON Schema** | [arec-1.4.schema.json](https://arecformat.org/schema/arec-1.4.schema.json) |
 | **Reference reader and validator** | [validate.mjs](https://arecformat.org/arec/validate.mjs) and [arec-validate.mjs](https://arecformat.org/arec/arec-validate.mjs) |
 | **Conformance fixtures** | [arecformat.org/arec/fixtures](https://arecformat.org/arec/fixtures/index.json) |
 | **Worked example** | [relay-design-review.arec](https://arecformat.org/arec/examples/relay-design-review.arec) |
@@ -14,7 +14,7 @@
 | **File extension** | `.arec` |
 | **Media type** | `text/markdown; charset=utf-8` |
 | **License** | Public domain (CC0 1.0); validator MIT |
-| **Editor** | Clipy, spec@arecformat.org |
+| **Editor** | spec@arecformat.org |
 
 ## Abstract
 
@@ -24,7 +24,7 @@ Any recorder may produce AREC and any agent may consume it, with no license fee,
 
 ## Status of this document
 
-This is AREC 1.3, the first stable release. It takes the field set published as 0.3 in August 2026, unchanged, and freezes it for the 1.x line: nothing a conformant 1.3 document relies on will be removed or redefined in any later 1.x release. Hosted recordings have been published in this field set since August 2026, so the rules below describe a format in daily production use rather than a proposal.
+This is AREC 1.4. AREC 1.3 was the first stable release: it took the field set published as 0.3 in August 2026, unchanged, and froze it for the 1.x line. 1.4 keeps that field set and gives the recording profile a neutral name, `recording` (section 3.1); every 1.3 document conforms to 1.4 unchanged. Nothing a conformant 1.3 document relies on will be removed or redefined in any later 1.x release. Hosted recordings have been published in this field set since August 2026, so the rules below describe a format in daily production use rather than a proposal.
 
 Questions, implementation reports and proposed additions go to the issue tracker at [github.com/arecformat/arec](https://github.com/arecformat/arec/issues), or to spec@arecformat.org. An ambiguous rule is treated as a defect in this specification and is fixed in the next minor release.
 
@@ -35,7 +35,7 @@ The key words MUST, MUST NOT, REQUIRED, SHOULD, SHOULD NOT, RECOMMENDED, MAY and
 - **Document:** one AREC file or response body, Markdown text beginning with the identity comment.
 - **Producer:** software that writes a document, such as a screen recorder, an import tool or a server that renders recordings.
 - **Consumer:** software that reads a document, such as a coding agent, an MCP server, a search index or a validator.
-- **Profile:** the kind of source a document describes. 1.3 defines `clipy-recording` and `imported-context`.
+- **Profile:** the kind of source a document describes. 1.4 defines `recording` and `imported-context`.
 - **Evidence:** anything derived from the recording itself: frames, crops, pointer positions, diagnostics, transcript text.
 - **Key moment:** a timestamped point in the recording with a caption and, where available, a frame, a crop and a pointer position.
 - **Capture gap:** a kind of evidence the producer did not capture, stated explicitly so its absence is not read as a fact.
@@ -64,8 +64,8 @@ Every AREC document begins with this machine-readable HTML comment:
 
 ```markdown
 <!-- arec
-spec_version: 1.3
-profile: clipy-recording
+spec_version: 1.4
+profile: recording
 canonical_url: https://example.com/video/k3m8q2x7w9pz.arec
 watch_url: https://example.com/video/k3m8q2x7w9pz
 -->
@@ -73,8 +73,8 @@ watch_url: https://example.com/video/k3m8q2x7w9pz
 
 The required fields are:
 
-- `spec_version`: the AREC version whose rules apply, written as `MAJOR.MINOR` (this version is `1.3`). MAJOR and MINOR are whole numbers without leading zeros. A pre-release suffix such as `-rc.1` may follow; it does not change which minor version the document follows.
-- `profile`: `clipy-recording` for a recording made with Clipy, hosted or saved on the device, or `imported-context` for a compiled external video.
+- `spec_version`: the AREC version whose rules apply, written as `MAJOR.MINOR` (this version is `1.4`). MAJOR and MINOR are whole numbers without leading zeros. A pre-release suffix such as `-rc.1` may follow; it does not change which minor version the document follows.
+- `profile`: `recording` for a screen recording, hosted or saved on the device, or `imported-context` for a compiled external video. 1.3 named the recording profile `clipy-recording`; the two names mean the same profile in every 1.x document, so consumers MUST treat them alike. Producers following 1.4 or later SHOULD write `recording`, and SHOULD NOT write it in a document that declares an earlier version, which a 1.3 checker would reject.
 
 `canonical_url` is the address of this AREC document itself: its absolute `https` `.arec` URL, or a relative path inside a downloadable bundle. It never names the source video or another page. `watch_url` is the human-facing page for the same recording. Both are required when the document has public URLs. A local or imported bundle MAY omit them and identify its source, such as the original video's URL, in Metadata instead. Field names are fixed; producers MAY add further fields, and consumers MUST ignore fields they do not recognize.
 
@@ -91,7 +91,7 @@ Every conformant AREC document MUST:
 
 Section order may vary by profile. Prose and headings may be localized or expanded as long as their meaning is preserved, and consumers match sections by meaning rather than exact heading text.
 
-### 3.3 The clipy-recording profile
+### 3.3 The recording profile
 
 A hosted recording SHOULD contain these sections when the underlying artifact exists:
 
@@ -111,7 +111,7 @@ A moment MAY carry a `motion` object when the pointer deliberately moved somethi
 
 ### 3.4 The imported-context profile
 
-An imported external video is a context bundle rather than a Clipy-hosted recording. Its canonical files are:
+An imported external video is a context bundle rather than a hosted recording. Its canonical files are:
 
 - `recording.arec`: the agent-facing document.
 - `recording.md`: a byte-identical compatibility copy.
@@ -129,7 +129,7 @@ JSON is a separate structured representation, not an AREC filename. Endpoints su
 
 ### 3.6 Optional extensions
 
-The following sections are optional in 1.3:
+The following sections are optional in 1.4:
 
 - **Verification:** agent read receipts, linked proof recordings, assertions, and verification outcomes.
 - **Signature:** a cryptographic signature over the document and referenced artifact hashes.
@@ -141,8 +141,8 @@ An absent optional section makes no claim about whether that activity occurred o
 
 ````markdown
 <!-- arec
-spec_version: 1.3
-profile: clipy-recording
+spec_version: 1.4
+profile: recording
 canonical_url: https://example.com/video/k3m8q2x7w9pz.arec
 watch_url: https://example.com/video/k3m8q2x7w9pz
 -->
@@ -154,7 +154,7 @@ Export CSV spins forever; the export request returns a 500.
 
 ## Metadata
 - Format: AREC (Agent Recording)
-- Spec version: 1.3
+- Spec version: 1.4
 - Duration: 00:41
 - Access: public
 - Processing: ready
@@ -215,7 +215,7 @@ mkdir -p arec/validator arec/bin && cd arec
 curl -fso validator/validate.mjs https://raw.githubusercontent.com/arecformat/arec/main/validator/validate.mjs
 curl -fso bin/arec-validate.mjs https://raw.githubusercontent.com/arecformat/arec/main/bin/arec-validate.mjs
 node bin/arec-validate.mjs ../recording.arec
-curl -fs https://clipy.online/video/<id>.arec | node bin/arec-validate.mjs -
+curl -fs https://example.com/video/<id>.arec | node bin/arec-validate.mjs -
 ```
 
 It exits 0 for any text document and prints its warnings. As a module, `import { readArec } from './validator/validate.mjs'` returns `{ document, warnings }` for a document's text, where `document` holds the identity header, title, sections, usable key moments and redacted diagnostics. It never throws.
@@ -224,11 +224,11 @@ It exits 0 for any text document and prints its warnings. As a module, `import {
 
 A producer that wants to check what it writes can run the same checks strictly: `node arec-validate.mjs --strict recording.arec`, or `validateArec(text, { mode: 'conform' })`. A broken rule is then an error and the exit code is 1. Nothing a reader does depends on this mode.
 
-The JSON Schema at [`/schema/arec-1.3.schema.json`](schema/arec-1.3.schema.json) (JSON Schema 2020-12) is the strict check for the parts of a document that are already machine-readable: the identity header parsed into an object, the key-moments array, and the browser-diagnostics array. It is a producer check, not a gate for reading. For those parts it applies the same rules as the strict check, because its patterns are generated from the reference code's own constants, with one exception a schema cannot express: a name repeated within one object, which the strict check finds in the JSON text.
+The JSON Schema at [`/schema/arec-1.4.schema.json`](schema/arec-1.4.schema.json) (JSON Schema 2020-12) is the strict check for the parts of a document that are already machine-readable: the identity header parsed into an object, the key-moments array, and the browser-diagnostics array. It is a producer check, not a gate for reading. For those parts it applies the same rules as the strict check, because its patterns are generated from the reference code's own constants, with one exception a schema cannot express: a name repeated within one object, which the strict check finds in the JSON text.
 
 AREC is a Markdown document, so several rules cannot be expressed as a schema. The strict check covers them directly: the leading identity comment; the presence of `Metadata`; a `Transcript` section or an explicit statement of its absence; stated completeness; both URLs in the identity comment when Metadata declares `Access: public`; the version rules of section 7.1; JSON blocks in the `Key moments` and `Browser diagnostics` sections (tagged `json`, `jsonc`, `json5`, `ndjson` or `jsonl`, or untagged JSON as defined in section 5) that parse as arrays (a `Key moments` block tagged `json` that does not parse is an error); and the section 5 rules in every JSON block in a diagnostics section: no sensitive keys, no string that begins with a URL carrying a raw query value, and no block that should hold JSON but does not parse. A legacy document passes only as legacy: the check reports it as such, never as conforming to the current version.
 
-The conformance fixtures come in both directions, and every one is published under [`/arec/fixtures/`](https://arecformat.org/arec/fixtures/index.json). The `valid` set holds documents that pass the strict check, including a hosted recording, an imported bundle, and legacy documents produced by earlier Clipy releases: a 0.3 hosted document, a 0.3 Mac local recording, an early CLI bundle and a hosted `recording.md` from before identity comments. The `invalid` set holds documents the strict check flags, each for one rule, which `fixtures/expected.json` names: a 1.x document without the identity comment, an unknown profile, a public document with no URLs, pointer coordinates outside the unit interval, a motion destination outside the unit interval, diagnostics carrying cookies, a diagnostic URL carrying a query value, a 0.3 document whose diagnostics carry headers, silence about missing capture, and an evidence reference that would force server-side frame extraction. A reader still reads every one of them.
+The conformance fixtures come in both directions, and every one is published under [`/arec/fixtures/`](https://arecformat.org/arec/fixtures/index.json). The `valid` set holds documents that pass the strict check, including a hosted recording, an imported bundle, a 1.3 document that uses the profile's earlier name, and legacy documents in the shapes earlier producers wrote: a 0.3 hosted document, a 0.3 local recording, an early import bundle and a hosted `recording.md` from before identity comments. The `invalid` set holds documents the strict check flags, each for one rule, which `fixtures/expected.json` names: a 1.x document without the identity comment, an unknown profile, a public document with no URLs, pointer coordinates outside the unit interval, a motion destination outside the unit interval, diagnostics carrying cookies, a diagnostic URL carrying a query value, a 0.3 document whose diagnostics carry headers, silence about missing capture, and an evidence reference that would force server-side frame extraction. A reader still reads every one of them.
 
 Producers and consumers disagree most often about what counts as evidence. Two rules settle it. Evidence references must point at precomputed artifacts, which may be absolute `https` URLs for a hosted document or relative paths inside a downloadable bundle, but must never be a frame-extraction endpoint the consumer has to call. And missing capture must be stated, because a document that omits a gap is making a silent claim that nothing happened.
 
@@ -262,7 +262,7 @@ The strict check and the schema flag a string that begins, after optional space,
 
 ## 7. Versioning and stability
 
-`spec_version` is `MAJOR.MINOR`. Version 1.3 is the first stable release: it takes the field set published as 0.3, unchanged, and freezes it. The minor number carries over from 0.3 so that the version a document declares lines up with the field set it uses.
+`spec_version` is `MAJOR.MINOR`. Version 1.3 was the first stable release: it took the field set published as 0.3, unchanged, and froze it. The minor number carries over from 0.3 so that the version a document declares lines up with the field set it uses. Version 1.4 adds `recording` as the name of the recording profile, alongside the 1.3 name it replaces.
 
 Within the 1.x line these promises hold:
 
@@ -284,19 +284,20 @@ A document written by an older producer never stops being readable because a new
 
 | Version | Published | Status |
 | --- | --- | --- |
-| 1.3 | October 2026 | Current, stable |
+| 1.4 | November 2026 | Current, stable |
+| 1.3 | October 2026 | Stable; documents conform to 1.4 unchanged |
 | 0.3 | August 2026 | Superseded by 1.3; documents stay readable (section 7.1) |
 | 0.2 | July 2026 | Superseded; documents stay readable (section 7.1) |
 | 0.1 | June 2026 | Superseded; documents stay readable (section 7.1) |
 
-The format was briefly published as OAR (Open Agent Recording) before being renamed to avoid a collision with the existing `.oar` archive extension. This page always shows the current version; the [changelog](https://arecformat.org/changelog) records every change and the additions being considered for 1.4.
+The format was briefly published as OAR (Open Agent Recording) before being renamed to avoid a collision with the existing `.oar` archive extension. This page always shows the current version; the [changelog](https://arecformat.org/changelog) records every change and the additions being considered for 1.5.
 
 ## 8. Implementations
 
-- **Clipy** produces the `clipy-recording` profile for every hosted recording, whichever app made it: the web recorder, the Chrome extension, the Mac and Windows apps, the iPhone and Android apps, the CLI and the MCP server. Each one is served at the recording's watch URL with `.arec` appended.
-- **The Clipy CLI** (`clipy context import`) produces the `imported-context` profile from a YouTube link, a Loom link or a local video file.
+The [implementations page](https://arecformat.org/implementations) lists the recorders and import tools that write AREC and the agents that read it.
+
 - **The reference reader** reads any AREC text leniently (section 4.3); its optional strict mode checks what a producer writes (section 4.4).
-- **Consumers** need nothing special. Claude Code, Codex, Cursor, ChatGPT and any other agent that can fetch a URL can read an AREC document as Markdown; Clipy's hosted MCP server and CLI also hand AREC to agents directly.
+- **Consumers** need nothing special. Claude Code, Codex, Cursor, ChatGPT and any other agent that can fetch a URL can read an AREC document as Markdown.
 
 Building a producer or consumer? Run it against the reference reader, the optional strict check and the fixtures, then open an issue or pull request at [github.com/arecformat/arec](https://github.com/arecformat/arec), or write to spec@arecformat.org, to be listed here.
 
@@ -304,16 +305,14 @@ Building a producer or consumer? Run it against the reference reader, the option
 
 AREC is free for anyone to implement, extend, translate, copy, sell or build on, for any purpose, with no permission and no attribution required.
 
-- **Specification, schema and fixtures:** dedicated to the public domain under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). To the extent possible under law, Clipy has waived all copyright and related rights in them.
+- **Specification, schema and fixtures:** dedicated to the public domain under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). To the extent possible under law, the AREC authors have waived all copyright and related rights in them.
 - **Reference validator:** released under the [MIT License](https://opensource.org/license/mit).
-- **Patents:** Clipy will not assert any patent claim against anyone for making, using, selling or distributing an implementation of AREC.
+- **Patents:** the AREC authors will not assert any patent claim against anyone for making, using, selling or distributing an implementation of AREC.
 - **The name:** anyone may say their software reads or writes AREC. A reader is conformant when it reads leniently as section 4.2 describes; to call a producer conformant, its documents should pass the strict check and the fixtures for the version it claims.
-
-The Clipy name and logo are Clipy's trademarks and are not covered by these grants.
 
 ## 10. How to cite
 
-> AREC (Agent Recording) Specification, version 1.3. Clipy, 15 October 2026. https://arecformat.org/spec
+> AREC (Agent Recording) Specification, version 1.4. The AREC authors, 3 November 2026. https://arecformat.org/spec
 
 Cite the version you implement. The changelog lists every version and what changed in it.
 
@@ -326,10 +325,3 @@ Cite the version you implement. The changelog lists every version and what chang
 - [CommonMark](https://spec.commonmark.org/): the Markdown syntax a document is written in.
 - [JSON Schema 2020-12](https://json-schema.org/specification): the schema language of the AREC schema.
 - [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986): URI syntax for `canonical_url`, `watch_url` and evidence references.
-
-**Informative**
-
-- [What is an agent-readable recording?](https://clipy.online/learn/agent-readable-recording)
-- [Anatomy of an AREC document](https://clipy.online/learn/markdown-twin-anatomy), an annotated walkthrough.
-- [How to give your agent video context](https://clipy.online/learn/give-agents-video-context)
-- [Agent context formats compared](https://clipy.online/learn/agent-context-formats-compared)

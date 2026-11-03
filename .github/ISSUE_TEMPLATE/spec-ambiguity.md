@@ -13,7 +13,7 @@ about: A rule in SPEC.md can be read more than one way
 
 ```markdown
 <!-- arec
-spec_version: 1.3
-profile: clipy-recording
+spec_version: 1.4
+profile: recording
 -->
 ```

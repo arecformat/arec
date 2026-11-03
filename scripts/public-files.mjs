@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // The files a website serves beside the specification, and the exact bytes of
-// each: the JSON Schema (also at its superseded 0.3 address), the reference
-// reader and its command-line runner laid out to run from one folder, the
-// conformance fixtures with an index and the manifest of expected errors, the
-// licence, and the worked example.
+// each: the JSON Schema and the frozen 1.3 schema (also at its superseded 0.3
+// address), the reference reader and its command-line runner laid out to run
+// from one folder, the conformance fixtures with an index and the manifest of
+// expected errors, the licence, and the worked example with its frames.
 //
 // arecformat.org (site/) and every other host build these from the same
 // function, so the copies cannot drift apart. Only the absolute links in the
@@ -23,7 +23,7 @@ export const EXAMPLE_PATH = 'examples/relay-design-review.arec';
 
 /**
  * @param {{ baseUrl: string }} options Origin the files are served from, with no trailing slash.
- * @returns {Map<string, string>} Served path (relative, no leading slash) to file contents.
+ * @returns {Map<string, string | Buffer>} Served path (relative, no leading slash) to file contents.
  */
 export function publicFiles({ baseUrl }) {
   const base = baseUrl.replace(/\/+$/, '');
@@ -31,11 +31,14 @@ export function publicFiles({ baseUrl }) {
   const read = (rel) => fs.readFileSync(path.join(SPEC, rel), 'utf8');
   const schemaText = expectedSchemaSource();
 
-  files.set('schema/arec-1.3.schema.json', schemaText);
-  // The 0.3 URL stays live for older links and serves the same field set, which
-  // 1.3 froze unchanged; only its identity says where the current schema lives.
+  files.set('schema/arec-1.4.schema.json', schemaText);
+  // The 1.3 schema is kept byte for byte as it was published, so a document
+  // that names it keeps the check it was written against. The 0.3 URL serves
+  // the same field set, which 1.3 froze unchanged; only its identity differs.
   // Both identities are fixed names, not the address the file is served from.
-  const legacySchema = JSON.parse(schemaText);
+  const frozenText = read('schema/arec-1.3.schema.json');
+  files.set('schema/arec-1.3.schema.json', frozenText);
+  const legacySchema = JSON.parse(frozenText);
   legacySchema.$id = 'https://clipy.online/schema/arec-0.3.schema.json';
   legacySchema.title = 'AREC (Agent Recording) 0.3, superseded by 1.3 at https://clipy.online/schema/arec-1.3.schema.json';
   files.set('schema/arec-0.3.schema.json', `${JSON.stringify(legacySchema, null, 2)}\n`);
@@ -48,6 +51,11 @@ export function publicFiles({ baseUrl }) {
   );
   files.set('arec/LICENSE.md', read('LICENSE.md'));
   files.set('arec/examples/relay-design-review.arec', read(EXAMPLE_PATH));
+  // The example's frames, so it can be read without any other host.
+  const frames = EXAMPLE_PATH.replace(/\.arec$/, '');
+  for (const name of fs.readdirSync(path.join(SPEC, frames)).filter((f) => f.endsWith('.jpg')).sort()) {
+    files.set(`arec/${frames}/${name}`, fs.readFileSync(path.join(SPEC, frames, name)));
+  }
 
   const index = {};
   for (const kind of ['valid', 'invalid']) {
@@ -65,7 +73,7 @@ export function publicFiles({ baseUrl }) {
     'arec/fixtures/index.json',
     `${JSON.stringify(
       {
-        spec_version: '1.3',
+        spec_version: '1.4',
         license: 'CC0-1.0',
         ...index,
         examples: [`${base}/arec/examples/relay-design-review.arec`],

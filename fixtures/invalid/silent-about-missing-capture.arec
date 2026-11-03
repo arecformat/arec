@@ -1,6 +1,6 @@
 <!-- arec
-spec_version: 1.3
-profile: clipy-recording
+spec_version: 1.4
+profile: recording
 canonical_url: https://example.com/video/silent001.arec
 watch_url: https://example.com/video/silent001
 -->

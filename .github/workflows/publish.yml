@@ -1,6 +1,6 @@
 name: Publish
 
-# Push a tag such as v1.3.1 to publish the package to npm. The tag must match
+# Push a tag such as v1.4.0 to publish the package to npm. The tag must match
 # package.json and point at a commit on main. A version with a pre-release
 # suffix (v1.4.0-rc.1) is published under the `next` dist-tag, never `latest`.
 #

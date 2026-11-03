@@ -11,8 +11,8 @@ agent can understand a request without decoding video and can trace every
 conclusion back to the evidence it came from.
 
 - Specification: https://arecformat.org/spec (plain text: https://arecformat.org/spec.md)
-- Current version: 1.3 (stable)
-- Machine-readable schema: [`schema/arec-1.3.schema.json`](schema/arec-1.3.schema.json)
+- Current version: 1.4 (stable)
+- Machine-readable schema: [`schema/arec-1.4.schema.json`](schema/arec-1.4.schema.json)
 - License: specification, schema, fixtures, examples and the website's text
   and images in the public domain (CC0 1.0); validator and build scripts under
   the MIT License. See [LICENSE.md](LICENSE.md).
@@ -43,7 +43,7 @@ From a clone of this repository:
 ```sh
 node bin/arec-validate.mjs recording.arec
 node bin/arec-validate.mjs --json fixtures/valid/*.arec
-curl -fs https://clipy.online/video/<id>.arec | node bin/arec-validate.mjs -
+curl -fs https://example.com/video/<id>.arec | node bin/arec-validate.mjs -
 ```
 
 By default it reads leniently: it exits 0 for any text document and prints
@@ -73,7 +73,7 @@ import { validateArec } from './validator/validate.mjs';
 const { ok, errors, warnings } = validateArec(text, { mode: 'conform' });
 ```
 
-`schema/arec-1.3.schema.json` is the same strict check for the parts of a
+`schema/arec-1.4.schema.json` is the same strict check for the parts of a
 document that are already machine-readable: the identity header parsed into an
 object, the key-moments array and the browser-diagnostics array. It is a
 producer check, not a gate for reading; its patterns are generated from
@@ -117,15 +117,15 @@ requirement of the format.
 
 ## Conformance fixtures
 
-`fixtures/valid/` holds documents that pass the strict check, including legacy
-documents in the shape earlier Clipy releases wrote them (with identifiers
-replaced by example values), which every 1.x reader must accept: `legacy-0.3.arec` (a 0.3 hosted document), `legacy-0.3-mac-local.arec`
-(a Mac app local recording, rendered by the 0.3-era desktop code, which wrote
-no identity comment),
-`legacy-0.2-cli-import.arec` (a `clipy context import` bundle, rendered by the
-July 2026 CLI, which wrote no identity comment) and
-`legacy-hosted-recording-md.arec` (a hosted `recording.md` rendered by the web
-app before identity comments existed). `fixtures/invalid/` holds documents
+`fixtures/valid/` holds documents that pass the strict check, including
+`profile-name-1.3.arec` (a 1.3 document using the profile's 1.3 name) and
+legacy documents in the shapes earlier producers wrote (with identifiers
+replaced by example values), which every 1.x reader must accept:
+`legacy-0.3.arec` (a 0.3 hosted document), `legacy-0.3-mac-local.arec` (a
+0.3 local recording, which had no identity comment),
+`legacy-0.2-cli-import.arec` (a July 2026 import bundle, which had no identity
+comment) and `legacy-hosted-recording-md.arec` (a hosted `recording.md` from
+before identity comments existed). `fixtures/invalid/` holds documents
 the strict check flags. Each breaks one rule, and `fixtures/expected.json` names
 the text every error for that file contains, so a port can check it rejects
 each fixture for the right reason. A reader still reads every one of them:
@@ -153,15 +153,17 @@ node bin/arec-validate.mjs --strict fixtures/invalid/*.arec  # strict: exit 1
 
 ## Profiles
 
-`clipy-recording` is a hosted recording. `imported-context` is a bundle compiled
+`recording` is a screen recording, hosted or saved on the device; 1.3 named it
+`clipy-recording`, and both names mean the same profile. `imported-context` is
+a bundle compiled
 from an external video, where the canonical files are `recording.arec`, a
 byte-identical `recording.md` compatibility copy, `manifest.json`,
 `transcript.json` and an optional `frames/` directory.
 
 ## Versioning
 
-`spec_version` is `MAJOR.MINOR`. 1.3 is the first stable release: the 0.3 field
-set, frozen. Within 1.x, minor releases only add optional sections, fields,
+`spec_version` is `MAJOR.MINOR`. 1.3 was the first stable release: the 0.3
+field set, frozen. 1.4 adds `recording` as the profile's name. Within 1.x, minor releases only add optional sections, fields,
 profiles or pointer `source` values; anything that would break a conformant
 document waits for 2.0. See [CHANGELOG.md](CHANGELOG.md).
 
@@ -191,12 +193,9 @@ rules it does not know.
 
 ## Implementations
 
-- [Clipy](https://clipy.online) writes AREC for every hosted recording
-  (`https://clipy.online/video/<id>.arec`), for recordings processed on the Mac
-  by Local AI (`recording.arec` on disk), and for videos imported with
-  `clipy context import`. Its MCP server and CLI read it.
-
-Add yours with a pull request.
+The recorders, import tools and agents that write and read AREC are listed at
+[arecformat.org/implementations](https://arecformat.org/implementations). Add
+yours with a pull request.
 
 ## Website
 
@@ -216,4 +215,4 @@ and GitHub highlights `.arec` files as Markdown, as this repository does.
 ## Feedback
 
 Open an issue, or write to spec@arecformat.org. Security reports go to
-security@clipy.online ([SECURITY.md](SECURITY.md)).
+security@arecformat.org ([SECURITY.md](SECURITY.md)).

@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-31
+updated: 2026-11-03
 title: AREC implementations: recorders, readers and uses
 description: Which recorders write AREC, which AI agents can read it, what it is used for, and where the format is heading next.
 ---
@@ -110,10 +110,11 @@ tool result.
 | August and September 2026 | Controlled coding benchmark and recorded case study published ([research](/research)) |
 | October 2026 | 1.3: first stable release, frozen for the 1.x line, with a JSON Schema, a reference reader and validator, and conformance fixtures |
 | October 2026 | 1.3.1 reference implementation; the format moves to its own home at arecformat.org with a public repository |
+| November 2026 | 1.4: the recording profile is named `recording`, and the schema and worked example are served from arecformat.org |
 
 ## What comes next
 
-Proposals for 1.4, each an optional addition, are listed in the
+Proposals for 1.5, each an optional addition, are listed in the
 [changelog](/changelog#unreleased). The largest are element identity on a key
 moment (a role and label beside the coordinate, so an agent knows what was
 pointed at and not only where), a registry of pointer `source` values so new

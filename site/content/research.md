@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-31
+updated: 2026-11-03
 title: AREC research: agents with AREC vs video and transcripts
 description: With an AREC document, a coding agent finished a recorded design review 4 of 5 times. With the transcript or the raw video, it never did.
 ---
@@ -78,13 +78,13 @@ AREC is the only condition that got every requirement in nearly every run.
 
 Full write-up, methods and data: [AREC vs transcript, controlled AI coding benchmark](https://clipy.online/research/arec-coding-benchmark).
 Code, prompts, every submission and the grader:
-[github.com/clipy-recorder/clipy-arec-benchmark](https://github.com/clipy-recorder/clipy-arec-benchmark).
+[the benchmark repository](https://github.com/clipy-recorder/clipy-arec-benchmark).
 
 ## Study 2: a production recording, thirty attempts (September 2026)
 
 ### The task
 
-A design review was recorded with Clipy's Chrome extension and processed by
+A design review was recorded with a Chrome extension and processed by
 the normal production pipeline, mistakes included: the transcript misheard
 part of one request, and the automatic summary turned it into a change to a
 filter. The review asked for three edits: copy a headline from a note, make one
@@ -122,7 +122,7 @@ Full write-up and data: [From "this button" to working edits](https://clipy.onli
 
 ## What this means for screen recorders
 
-Clipy was the first screen recorder to write AREC. Every recorder can
+Every recorder can
 give an agent a video file, and many also export a transcript: the two inputs
 the benchmark measured against AREC.
 

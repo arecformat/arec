@@ -46,7 +46,7 @@ strict check is where a broken rule becomes an error.
 
 ## Changing the specification
 
-AREC 1.3 is stable. Read the backward compatibility guarantee in `README.md`
+AREC 1.4 is stable. Read the backward compatibility guarantee in `README.md`
 and the stability section of `SPEC.md` before proposing a change.
 
 - Explain the problem first: what a producer or consumer gets wrong today.

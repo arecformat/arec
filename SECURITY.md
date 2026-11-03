@@ -11,8 +11,5 @@ diagnostics section.
 
 If you find a way for a document to leak secrets through a conformant reader,
 or for the strict check to accept a document that breaks those rules, please
-report it privately to security@clipy.online rather than opening a public
+report it privately to security@arecformat.org rather than opening a public
 issue.
-
-For vulnerabilities in Clipy's hosted service, see
-https://clipy.online/security.
